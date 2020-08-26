@@ -3,3 +3,4 @@ CMSresponseAnalysis/plots/*/*.pdf
 CMSresponseAnalysis/plots/*/*.eps
 CMSresponseAnalysis/input_ROOT_files/*.root
 CMSresponseAnalysis/output_ROOT_files/*.root
+
