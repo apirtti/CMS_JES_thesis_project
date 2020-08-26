@@ -1,0 +1,373 @@
+
+ *-------  PYTHIA Event and Cross Section Statistics  -------------------------------------------------------------*
+ |                                                                                                                 |
+ | Subprocess                                    Code |            Number of events       |      sigma +- delta    |
+ |                                                    |       Tried   Selected   Accepted |     (estimated) (mb)   |
+ |                                                    |                                   |                        |
+ |-----------------------------------------------------------------------------------------------------------------|
+ |                                                    |                                   |                        |
+ | g g -> g g                                     111 |    25598956    2446122    2446122 |   4.947e+01  1.709e-02 |
+ | g g -> q qbar (uds)                            112 |      683041      45680      45680 |   8.164e-01  1.312e-03 |
+ | q g -> q g                                     113 |    33624619    1331606    1331606 |   2.054e+01  7.588e-03 |
+ | q q(bar)' -> q q(bar)'                         114 |     1999147     145978     145978 |   1.643e+00  1.985e-03 |
+ | q qbar -> g g                                  115 |       18617       2076       2076 |   1.811e-02  1.862e-04 |
+ | q qbar -> q' qbar' (uds)                       116 |       34255       1401       1401 |   1.122e-02  7.573e-05 |
+ | g g -> c cbar                                  121 |      222523      14606      14606 |   2.517e-01  6.946e-04 |
+ | q qbar -> c cbar                               122 |       11216        456        456 |   3.345e-03  4.047e-05 |
+ | g g -> b bbar                                  123 |      182162      11676      11676 |   1.257e-01  3.630e-04 |
+ | q qbar -> b bbar                               124 |        9312        399        399 |   1.906e-03  2.646e-05 |
+ |                                                    |                                   |                        |
+ | sum                                                |    62383848    4000000    4000000 |   7.288e+01  1.887e-02 |
+ |                                                                                                                 |
+ *-------  End PYTHIA Event and Cross Section Statistics ----------------------------------------------------------*
+
+ *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------* 
+ |                                                                                                                 | 
+ |  times   message                                                                                                | 
+ |                                                                                                                 | 
+ |    194   Error in BeamRemnants::Add: failed to find physical colour state after colour reconnection             | 
+ |     10   Error in BeamRemnants::setKinematics: kinematics construction failed                                   | 
+ |      7   Error in HadronLevel::next: failed colour/junction check                                               | 
+ |     75   Error in MiniStringFragmentation::fragment: no 1- or 2-body state found above mass threshold           | 
+ |   3382   Error in Pythia::next: hadronLevel failed; try again                                                   | 
+ |   2318   Error in SpaceShower::pT2nearThreshold: stuck in loop                                                  | 
+ |   2121   Error in StringFragmentation::fragment: stuck in joining                                               | 
+ |   1179   Error in StringFragmentation::fragmentToJunction: caught in junction flavour loop                      | 
+ |    201   Warning in JunctionSplitting::CheckColours: Not possible to split junctions; making new colours        | 
+ |    201   Warning in JunctionSplitting::SplitJunPairs: parallel junction state not allowed.                      | 
+ |    249   Warning in MultipartonInteractions::pTnext: weight above unity                                         | 
+ |    116   Warning in Pythia::check: energy-momentum not quite conserved                                          | 
+ |    283   Warning in Pythia::check: not quite matched particle energy/momentum/mass                              | 
+ |  18216   Warning in SpaceShower::pT2nextQCD: small daughter PDF                                                 | 
+ | 483213   Warning in SpaceShower::pT2nextQCD: weight above unity                                                 | 
+ |   4819   Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame                | 
+ |      1   Warning in TauDecays::decay: maximum decay weight exceeded in tau decay                                | 
+ |     27   Warning in TauDecays::decay: unknown correlated tau production, assuming from unpolarized photon       | 
+ |      4   Warning in TimeShower::findMEcorr: ME weight above PS one                                              | 
+ |                                                                                                                 | 
+ *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------* 
+Total cross-section: 7.28821e+10 pm 1.88672e+07 pb.
+Passed cross-section: 7.28821e+10 pm 1.88672e+07 pb.
+4000000
+Possible errors:
+Time elapsed: 208034 s.
+3973000 events processed, ETA : 0h23m33s.
+3964000 events processed, ETA : 0h31m29s.
+3992000 events processed, ETA : 0h6m56s.
+3992000 events processed, ETA : 0h6m56s.
+3974000 events processed, ETA : 0h22m41s.
+3965000 events processed, ETA : 0h30m36s.
+3993000 events processed, ETA : 0h6m4s.
+3993000 events processed, ETA : 0h6m4s.
+3975000 events processed, ETA : 0h21m48s.
+3966000 events processed, ETA : 0h29m44s.
+3994000 events processed, ETA : 0h5m12s.
+3994000 events processed, ETA : 0h5m12s.
+3976000 events processed, ETA : 0h20m56s.
+3967000 events processed, ETA : 0h28m51s.
+3995000 events processed, ETA : 0h4m20s.
+3995000 events processed, ETA : 0h4m20s.
+3977000 events processed, ETA : 0h20m4s.
+3968000 events processed, ETA : 0h27m59s.
+3996000 events processed, ETA : 0h3m28s.
+3996000 events processed, ETA : 0h3m28s.
+3978000 events processed, ETA : 0h19m11s.
+3969000 events processed, ETA : 0h27m6s.
+3997000 events processed, ETA : 0h2m36s.
+3997000 events processed, ETA : 0h2m36s.
+3979000 events processed, ETA : 0h18m19s.
+3970000 events processed, ETA : 0h26m14s.
+3998000 events processed, ETA : 0h1m44s.
+3998000 events processed, ETA : 0h1m44s.
+3980000 events processed, ETA : 0h17m26s.
+3971000 events processed, ETA : 0h25m21s.
+3999000 events processed, ETA : 0h0m52s.
+3999000 events processed, ETA : 0h0m52s.
+3981000 events processed, ETA : 0h16m34s.
+3972000 events processed, ETA : 0h24m29s.
+4000000 events processed, ETA : 0h0m0s.
+
+ *-------  PYTHIA Event and Cross Section Statistics  -------------------------------------------------------------*
+ |                                                                                                                 |
+ | Subprocess                                    Code |            Number of events       |      sigma +- delta    |
+ |                                                    |       Tried   Selected   Accepted |     (estimated) (mb)   |
+ |                                                    |                                   |                        |
+ |-----------------------------------------------------------------------------------------------------------------|
+ |                                                    |                                   |                        |
+ | g g -> g g                                     111 |    25594925    2448903    2448903 |   4.951e+01  1.710e-02 |
+ | g g -> q qbar (uds)                            112 |      683186      45048      45048 |   8.132e-01  1.311e-03 |
+ | q g -> q g                                     113 |    33623195    1330211    1330211 |   2.053e+01  7.588e-03 |
+ | q q(bar)' -> q q(bar)'                         114 |     1996227     145143     145143 |   1.645e+00  1.986e-03 |
+ | q qbar -> g g                                  115 |       18610       2153       2153 |   1.806e-02  1.862e-04 |
+ | q qbar -> q' qbar' (uds)                       116 |       34061       1333       1333 |   1.121e-02  7.616e-05 |
+ | g g -> c cbar                                  121 |      222534      14782      14782 |   2.517e-01  6.953e-04 |
+ | q qbar -> c cbar                               122 |       11230        453        453 |   3.384e-03  4.067e-05 |
+ | g g -> b bbar                                  123 |      180413      11562      11562 |   1.252e-01  3.632e-04 |
+ | q qbar -> b bbar                               124 |        9453        412        412 |   1.849e-03  2.572e-05 |
+ |                                                    |                                   |                        |
+ | sum                                                |    62373834    4000000    4000000 |   7.291e+01  1.888e-02 |
+ |                                                                                                                 |
+ *-------  End PYTHIA Event and Cross Section Statistics ----------------------------------------------------------*
+
+ *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------* 
+ |                                                                                                                 | 
+ |  times   message                                                                                                | 
+ |                                                                                                                 | 
+ |    176   Error in BeamRemnants::Add: failed to find physical colour state after colour reconnection             | 
+ |      9   Error in BeamRemnants::setKinematics: kinematics construction failed                                   | 
+ |      4   Error in HadronLevel::next: failed colour/junction check                                               | 
+ |    110   Error in MiniStringFragmentation::fragment: no 1- or 2-body state found above mass threshold           | 
+ |      1   Error in ParticleDecays::decay: failed to find workable decay channel                                  | 
+ |      1   Error in Pythia::check: unmatched particle energy/momentum/mass                                        | 
+ |      1   Error in Pythia::next: check of event revealed problems                                                | 
+ |   3395   Error in Pythia::next: hadronLevel failed; try again                                                   | 
+ |   2181   Error in SpaceShower::pT2nearThreshold: stuck in loop                                                  | 
+ |      1   Error in SpaceShower::pT2nearThreshold: xPDF = 0                                                       | 
+ |   2111   Error in StringFragmentation::fragment: stuck in joining                                               | 
+ |   1170   Error in StringFragmentation::fragmentToJunction: caught in junction flavour loop                      | 
+ |    180   Warning in JunctionSplitting::CheckColours: Not possible to split junctions; making new colours        | 
+ |    180   Warning in JunctionSplitting::SplitJunPairs: parallel junction state not allowed.                      | 
+ |    281   Warning in MultipartonInteractions::pTnext: weight above unity                                         | 
+ |    117   Warning in Pythia::check: energy-momentum not quite conserved                                          | 
+ |    299   Warning in Pythia::check: not quite matched particle energy/momentum/mass                              | 
+ |  17851   Warning in SpaceShower::pT2nextQCD: small daughter PDF                                                 | 
+ | 482137   Warning in SpaceShower::pT2nextQCD: weight above unity                                                 | 
+ |      5   Warning in StringFragmentation::fragmentToJunction: Negative invariant masses in junction rest frame   | 
+ |   4860   Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame                | 
+ |      6   Warning in TauDecays::decay: maximum decay weight exceeded in tau decay                                | 
+ |     28   Warning in TauDecays::decay: unknown correlated tau production, assuming from unpolarized photon       | 
+ |      5   Warning in TimeShower::findMEcorr: ME weight above PS one                                              | 
+ |                                                                                                                 | 
+ *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------* 
+Total cross-section: 7.29091e+10 pm 1.88771e+07 pb.
+Passed cross-section: 7.29091e+10 pm 1.88771e+07 pb.
+4000000
+Possible errors:
+Time elapsed: 208400 s.
+4000000 events processed, ETA : 0h0m0s.
+
+ *-------  PYTHIA Event and Cross Section Statistics  -------------------------------------------------------------*
+ |                                                                                                                 |
+ | Subprocess                                    Code |            Number of events       |      sigma +- delta    |
+ |                                                    |       Tried   Selected   Accepted |     (estimated) (mb)   |
+ |                                                    |                                   |                        |
+ |-----------------------------------------------------------------------------------------------------------------|
+ |                                                    |                                   |                        |
+ | g g -> g g                                     111 |    25612119    2447337    2447337 |   4.951e+01  1.709e-02 |
+ | g g -> q qbar (uds)                            112 |      683717      44858      44858 |   8.126e-01  1.308e-03 |
+ | q g -> q g                                     113 |    33637732    1331280    1331280 |   2.055e+01  7.590e-03 |
+ | q q(bar)' -> q q(bar)'                         114 |     1998949     145685     145685 |   1.647e+00  1.985e-03 |
+ | q qbar -> g g                                  115 |       18850       2066       2066 |   1.797e-02  1.848e-04 |
+ | q qbar -> q' qbar' (uds)                       116 |       34008       1429       1429 |   1.120e-02  7.619e-05 |
+ | g g -> c cbar                                  121 |      222797      14834      14834 |   2.526e-01  6.951e-04 |
+ | q qbar -> c cbar                               122 |       11188        464        464 |   3.454e-03  4.114e-05 |
+ | g g -> b bbar                                  123 |      181790      11635      11635 |   1.255e-01  3.629e-04 |
+ | q qbar -> b bbar                               124 |        9436        412        412 |   1.848e-03  2.595e-05 |
+ |                                                    |                                   |                        |
+ | sum                                                |    62410586    4000000    4000000 |   7.293e+01  1.887e-02 |
+ |                                                                                                                 |
+ *-------  End PYTHIA Event and Cross Section Statistics ----------------------------------------------------------*
+
+ *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------* 
+ |                                                                                                                 | 
+ |  times   message                                                                                                | 
+ |                                                                                                                 | 
+ |    177   Error in BeamRemnants::Add: failed to find physical colour state after colour reconnection             | 
+ |      9   Error in BeamRemnants::setKinematics: kinematics construction failed                                   | 
+ |      7   Error in HadronLevel::next: failed colour/junction check                                               | 
+ |    114   Error in MiniStringFragmentation::fragment: no 1- or 2-body state found above mass threshold           | 
+ |      5   Error in Pythia::check: unmatched particle energy/momentum/mass                                        | 
+ |      2   Error in Pythia::next: check of event revealed problems                                                | 
+ |   3360   Error in Pythia::next: hadronLevel failed; try again                                                   | 
+ |   2118   Error in SpaceShower::pT2nearThreshold: stuck in loop                                                  | 
+ |   2070   Error in StringFragmentation::fragment: stuck in joining                                               | 
+ |   1169   Error in StringFragmentation::fragmentToJunction: caught in junction flavour loop                      | 
+ |    184   Warning in JunctionSplitting::CheckColours: Not possible to split junctions; making new colours        | 
+ |    184   Warning in JunctionSplitting::SplitJunPairs: parallel junction state not allowed.                      | 
+ |    278   Warning in MultipartonInteractions::pTnext: weight above unity                                         | 
+ |    105   Warning in Pythia::check: energy-momentum not quite conserved                                          | 
+ |    261   Warning in Pythia::check: not quite matched particle energy/momentum/mass                              | 
+ |  19511   Warning in SpaceShower::pT2nextQCD: small daughter PDF                                                 | 
+ | 482210   Warning in SpaceShower::pT2nextQCD: weight above unity                                                 | 
+ |   4682   Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame                | 
+ |      8   Warning in TauDecays::decay: maximum decay weight exceeded in tau decay                                | 
+ |     30   Warning in TauDecays::decay: unknown correlated tau production, assuming from unpolarized photon       | 
+ |      4   Warning in TimeShower::findMEcorr: ME weight above PS one                                              | 
+ |                                                                                                                 | 
+ *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------* 
+Total cross-section: 7.29272e+10 pm 1.88721e+07 pb.
+Passed cross-section: 7.29272e+10 pm 1.88721e+07 pb.
+4000000
+Possible errors:
+Time elapsed: 208404 s.
+3982000 events processed, ETA : 0h15m42s.
+3973000 events processed, ETA : 0h23m36s.
+3983000 events processed, ETA : 0h14m49s.
+3974000 events processed, ETA : 0h22m43s.
+3984000 events processed, ETA : 0h13m57s.
+3975000 events processed, ETA : 0h21m51s.
+3985000 events processed, ETA : 0h13m4s.
+3976000 events processed, ETA : 0h20m58s.
+3986000 events processed, ETA : 0h12m12s.
+3977000 events processed, ETA : 0h20m6s.
+3987000 events processed, ETA : 0h11m20s.
+3978000 events processed, ETA : 0h19m13s.
+3988000 events processed, ETA : 0h10m27s.
+3979000 events processed, ETA : 0h18m21s.
+3989000 events processed, ETA : 0h9m35s.
+3980000 events processed, ETA : 0h17m28s.
+3990000 events processed, ETA : 0h8m43s.
+3981000 events processed, ETA : 0h16m36s.
+3991000 events processed, ETA : 0h7m50s.
+3982000 events processed, ETA : 0h15m43s.
+3992000 events processed, ETA : 0h6m58s.
+3983000 events processed, ETA : 0h14m51s.
+3993000 events processed, ETA : 0h6m6s.
+3984000 events processed, ETA : 0h13m58s.
+3994000 events processed, ETA : 0h5m13s.
+3985000 events processed, ETA : 0h13m6s.
+3995000 events processed, ETA : 0h4m21s.
+3986000 events processed, ETA : 0h12m13s.
+3996000 events processed, ETA : 0h3m29s.
+3987000 events processed, ETA : 0h11m21s.
+3997000 events processed, ETA : 0h2m36s.
+3988000 events processed, ETA : 0h10m28s.
+3998000 events processed, ETA : 0h1m44s.
+3989000 events processed, ETA : 0h9m36s.
+3999000 events processed, ETA : 0h0m52s.
+3990000 events processed, ETA : 0h8m43s.
+4000000 events processed, ETA : 0h0m0s.
+
+ *-------  PYTHIA Event and Cross Section Statistics  -------------------------------------------------------------*
+ |                                                                                                                 |
+ | Subprocess                                    Code |            Number of events       |      sigma +- delta    |
+ |                                                    |       Tried   Selected   Accepted |     (estimated) (mb)   |
+ |                                                    |                                   |                        |
+ |-----------------------------------------------------------------------------------------------------------------|
+ |                                                    |                                   |                        |
+ | g g -> g g                                     111 |    25607742    2447676    2447676 |   4.952e+01  1.710e-02 |
+ | g g -> q qbar (uds)                            112 |      683290      45480      45480 |   8.126e-01  1.308e-03 |
+ | q g -> q g                                     113 |    33632399    1331010    1331010 |   2.053e+01  7.587e-03 |
+ | q q(bar)' -> q q(bar)'                         114 |     1998795     145007     145007 |   1.647e+00  1.986e-03 |
+ | q qbar -> g g                                  115 |       18766       2179       2179 |   1.802e-02  1.870e-04 |
+ | q qbar -> q' qbar' (uds)                       116 |       34413       1407       1407 |   1.118e-02  7.545e-05 |
+ | g g -> c cbar                                  121 |      221701      14770      14770 |   2.519e-01  6.957e-04 |
+ | q qbar -> c cbar                               122 |       11233        438        438 |   3.407e-03  4.056e-05 |
+ | g g -> b bbar                                  123 |      181233      11605      11605 |   1.260e-01  3.635e-04 |
+ | q qbar -> b bbar                               124 |        9487        428        428 |   1.811e-03  2.547e-05 |
+ |                                                    |                                   |                        |
+ | sum                                                |    62399059    4000000    4000000 |   7.292e+01  1.887e-02 |
+ |                                                                                                                 |
+ *-------  End PYTHIA Event and Cross Section Statistics ----------------------------------------------------------*
+
+ *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------* 
+ |                                                                                                                 | 
+ |  times   message                                                                                                | 
+ |                                                                                                                 | 
+ |    196   Error in BeamRemnants::Add: failed to find physical colour state after colour reconnection             | 
+ |     11   Error in BeamRemnants::setKinematics: kinematics construction failed                                   | 
+ |      7   Error in HadronLevel::next: failed colour/junction check                                               | 
+ |    119   Error in MiniStringFragmentation::fragment: no 1- or 2-body state found above mass threshold           | 
+ |      2   Error in ParticleDecays::decay: failed to find workable decay channel                                  | 
+ |   3335   Error in Pythia::next: hadronLevel failed; try again                                                   | 
+ |   2216   Error in SpaceShower::pT2nearThreshold: stuck in loop                                                  | 
+ |   2021   Error in StringFragmentation::fragment: stuck in joining                                               | 
+ |   1188   Error in StringFragmentation::fragmentToJunction: caught in junction flavour loop                      | 
+ |    203   Warning in JunctionSplitting::CheckColours: Not possible to split junctions; making new colours        | 
+ |    203   Warning in JunctionSplitting::SplitJunPairs: parallel junction state not allowed.                      | 
+ |    261   Warning in MultipartonInteractions::pTnext: weight above unity                                         | 
+ |    115   Warning in Pythia::check: energy-momentum not quite conserved                                          | 
+ |    276   Warning in Pythia::check: not quite matched particle energy/momentum/mass                              | 
+ |  18252   Warning in SpaceShower::pT2nextQCD: small daughter PDF                                                 | 
+ | 481423   Warning in SpaceShower::pT2nextQCD: weight above unity                                                 | 
+ |      1   Warning in StringFragmentation::fragmentToJunction: Negative invariant masses in junction rest frame   | 
+ |   4713   Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame                | 
+ |      5   Warning in TauDecays::decay: maximum decay weight exceeded in tau decay                                | 
+ |     29   Warning in TauDecays::decay: unknown correlated tau production, assuming from unpolarized photon       | 
+ |      5   Warning in TimeShower::findMEcorr: ME weight above PS one                                              | 
+ |                                                                                                                 | 
+ *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------* 
+Total cross-section: 7.29224e+10 pm 1.88725e+07 pb.
+Passed cross-section: 7.29224e+10 pm 1.88725e+07 pb.
+4000000
+Possible errors:
+Time elapsed: 209053 s.
+3991000 events processed, ETA : 0h7m51s.
+3992000 events processed, ETA : 0h6m59s.
+3993000 events processed, ETA : 0h6m6s.
+3994000 events processed, ETA : 0h5m14s.
+3995000 events processed, ETA : 0h4m21s.
+3996000 events processed, ETA : 0h3m29s.
+3997000 events processed, ETA : 0h2m37s.
+3998000 events processed, ETA : 0h1m44s.
+3999000 events processed, ETA : 0h0m52s.
+4000000 events processed, ETA : 0h0m0s.
+
+ *-------  PYTHIA Event and Cross Section Statistics  -------------------------------------------------------------*
+ |                                                                                                                 |
+ | Subprocess                                    Code |            Number of events       |      sigma +- delta    |
+ |                                                    |       Tried   Selected   Accepted |     (estimated) (mb)   |
+ |                                                    |                                   |                        |
+ |-----------------------------------------------------------------------------------------------------------------|
+ |                                                    |                                   |                        |
+ | g g -> g g                                     111 |    25597012    2448586    2448586 |   4.949e+01  1.710e-02 |
+ | g g -> q qbar (uds)                            112 |      681475      45276      45276 |   8.154e-01  1.312e-03 |
+ | q g -> q g                                     113 |    33637670    1330539    1330539 |   2.053e+01  7.585e-03 |
+ | q q(bar)' -> q q(bar)'                         114 |     1995104     145175     145175 |   1.645e+00  1.986e-03 |
+ | q qbar -> g g                                  115 |       18631       2107       2107 |   1.775e-02  1.851e-04 |
+ | q qbar -> q' qbar' (uds)                       116 |       34101       1395       1395 |   1.117e-02  7.606e-05 |
+ | g g -> c cbar                                  121 |      222550      14574      14574 |   2.527e-01  6.952e-04 |
+ | q qbar -> c cbar                               122 |       11022        463        463 |   3.477e-03  4.162e-05 |
+ | g g -> b bbar                                  123 |      180753      11509      11509 |   1.252e-01  3.634e-04 |
+ | q qbar -> b bbar                               124 |        9336        376        376 |   1.802e-03  2.570e-05 |
+ |                                                    |                                   |                        |
+ | sum                                                |    62387654    4000000    4000000 |   7.289e+01  1.887e-02 |
+ |                                                                                                                 |
+ *-------  End PYTHIA Event and Cross Section Statistics ----------------------------------------------------------*
+
+ *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------* 
+ |                                                                                                                 | 
+ |  times   message                                                                                                | 
+ |                                                                                                                 | 
+ |    173   Error in BeamRemnants::Add: failed to find physical colour state after colour reconnection             | 
+ |      9   Error in BeamRemnants::setKinematics: kinematics construction failed                                   | 
+ |      8   Error in HadronLevel::next: failed colour/junction check                                               | 
+ |    109   Error in MiniStringFragmentation::fragment: no 1- or 2-body state found above mass threshold           | 
+ |      1   Error in Pythia::check: unmatched particle energy/momentum/mass                                        | 
+ |      1   Error in Pythia::next: check of event revealed problems                                                | 
+ |   3407   Error in Pythia::next: hadronLevel failed; try again                                                   | 
+ |   2052   Error in SpaceShower::pT2nearThreshold: stuck in loop                                                  | 
+ |   2060   Error in StringFragmentation::fragment: stuck in joining                                               | 
+ |   1230   Error in StringFragmentation::fragmentToJunction: caught in junction flavour loop                      | 
+ |      1   Warning in JunctionSplitting::CheckColours: Made a gluon colour singlet; redoing colours               | 
+ |    180   Warning in JunctionSplitting::CheckColours: Not possible to split junctions; making new colours        | 
+ |    180   Warning in JunctionSplitting::SplitJunPairs: parallel junction state not allowed.                      | 
+ |    262   Warning in MultipartonInteractions::pTnext: weight above unity                                         | 
+ |    127   Warning in Pythia::check: energy-momentum not quite conserved                                          | 
+ |    271   Warning in Pythia::check: not quite matched particle energy/momentum/mass                              | 
+ |  19236   Warning in SpaceShower::pT2nextQCD: small daughter PDF                                                 | 
+ | 481418   Warning in SpaceShower::pT2nextQCD: weight above unity                                                 | 
+ |      3   Warning in StringFragmentation::fragmentToJunction: Negative invariant masses in junction rest frame   | 
+ |   4742   Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame                | 
+ |      6   Warning in TauDecays::decay: maximum decay weight exceeded in tau decay                                | 
+ |     17   Warning in TauDecays::decay: unknown correlated tau production, assuming from unpolarized photon       | 
+ |      4   Warning in TimeShower::findMEcorr: ME weight above PS one                                              | 
+ |                                                                                                                 | 
+ *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------* 
+Total cross-section: 7.28903e+10 pm 1.88724e+07 pb.
+Passed cross-section: 7.28903e+10 pm 1.88724e+07 pb.
+4000000
+Possible errors:
+Time elapsed: 209336 s.
+pjets_pythia8_dijet_20000000_0.root pjets_pythia8_dijet_20000000_1.root pjets_pythia8_dijet_20000000_2.root pjets_pythia8_dijet_20000000_3.root pjets_pythia8_dijet_20000000_4.root
+pjets_pythia8_dijet_20000000.root
+5
+hadd Target file: pjets_pythia8_dijet_20000000.root
+hadd compression setting for all ouput: 1
+hadd Source file 1: pjets_pythia8_dijet_20000000_0.root
+hadd Source file 2: pjets_pythia8_dijet_20000000_1.root
+hadd Source file 3: pjets_pythia8_dijet_20000000_2.root
+hadd Source file 4: pjets_pythia8_dijet_20000000_3.root
+hadd Source file 5: pjets_pythia8_dijet_20000000_4.root
+hadd Target path: pjets_pythia8_dijet_20000000.root:/
+
