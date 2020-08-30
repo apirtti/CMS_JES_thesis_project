@@ -411,10 +411,12 @@ void CMSJES::Loop()
 	bool found_B0s;
 	bool found_Bb;
 	bool found_nonB;
-	bool found_manyB;
 
 	//Variable gets different values according to additional weights we want to use for the event
-	double additional_weight = 1;
+	double additional_weight;
+
+	//Storing the highest pT for the "hardest" B-hadron in the event
+	double highest_pT;
 
 	//Additional weights for the different B-hadrons found in the probe jet
 	const double wB0 = 0.9318761619619224;
@@ -616,8 +618,6 @@ void CMSJES::Loop()
     //Skip events that didn't pass cuts earlier. Useful in e.g. repeating Loop
     if (GetuseEarlierCuts() && passedCuts.size()>jentry && !passedCuts[jentry]) continue;
  
-
-
     Long64_t ientry = LoadTree(jentry);	//Load new event
     if (ientry < 0) break;		//When no more events
     nb = fChain->GetEntry(jentry); nbytes += nb;
@@ -639,11 +639,12 @@ void CMSJES::Loop()
     probe_gamma = 0.0; probe_e     = 0.0;
 
 		additional_weight = 1.0;
+		highest_pT = -1.0;
 
 	 	semilep_decay = false;
 
 	  found_B0 = false;	found_Bp = false;		found_B0s = false;
-	  found_Bb = false;	found_nonB = false;	found_manyB = false;
+	  found_Bb = false;	found_nonB = false;
 
     jets_g.clear();
     njets = (unsigned long)jet_pt->size();
@@ -832,36 +833,33 @@ void CMSJES::Loop()
     	prtn_JI  = (*prtn_jet)[i];
       prtn_PDG = abs((*prtn_pdgid)[i]);
 
+			//Finds the highest pT B-hadron
       if (prtn_JI==i_probe) {
-				if (prtn_PDG == 511) {
-					additional_weight *= wB0;
-					found_B0 = true;
-					break;
-				} else if (prtn_PDG == 521) {
-					additional_weight *= wBp;
-					found_Bp = true;
-					break;
-				} else if (prtn_PDG == 531) {
-					additional_weight *= wB0s;
-	  			found_B0s = true;
-					break;
-				} else if (prtn_PDG > 5100 && prtn_PDG < 5560) {
-					additional_weight *= wBb;
-			    found_Bb = true;
-					break;
+				if (prtn_PDG == 511 && (*prtn_pt)[i] > highest_pT) {
+					found_B0  = true;  found_Bp = false;
+					found_B0s = false; found_Bb = false;
+				} else if (prtn_PDG == 521 && (*prtn_pt)[i] > highest_pT) {
+					found_Bp = true; 	 found_B0 = false;
+				  found_B0s = false; found_Bb = false;
+				} else if (prtn_PDG == 531 && (*prtn_pt)[i] > highest_pT) {
+	  			found_B0s = true;  found_B0 = false;
+				  found_Bp  = false; found_Bb = false; 
+				} else if ((prtn_PDG > 5100 && prtn_PDG < 5560) && (*prtn_pt)[i] > highest_pT) {
+			    found_Bb = true;  found_B0 = false;
+				  found_Bp = false; found_B0s = false; 
 				}
 		 	}
 	  }
+	
+		if 			(found_B0 == true)  additional_weight *= wB0;
+		else if (found_Bp == true)  additional_weight *= wBp;
+		else if (found_B0s == true) additional_weight *= wB0s;
+		else if (found_Bb == true)  additional_weight *= wBb;
 
 	  //checks whether there's no B-hadrons
 	  if (found_B0 == false && found_Bp == false && found_B0s == false && found_Bb == false) {
 	    found_nonB = true;	
 	  }
-
-	  //checks whether there's many B-hadrons
-	  if (found_B0 + found_Bp + found_B0s + found_Bb > 1) {
-      found_manyB = true;
-	  } 
 
 	  //if B-hadron weighting is off, clear the additional weight
 	  if (B_had_weighting == false) {
@@ -1218,13 +1216,11 @@ void CMSJES::Loop()
     //pT balance
     prpTbal->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 
-		if (found_manyB == false) {
-	    if (found_B0 == true) prpTbal_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-	    if (found_Bp == true) prpTbal_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-	    if (found_B0s == true) prpTbal_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-	    if (found_Bb== true) prpTbal_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-	    if (found_nonB == true) prpTbal_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-		}
+    if (found_B0 == true) prpTbal_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+    if (found_Bp == true) prpTbal_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+    if (found_B0s == true) prpTbal_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+    if (found_Bb== true) prpTbal_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+    if (found_nonB == true) prpTbal_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 
     //MPF response
     R_MPF_r = 1.0 + (MET_r.Px()*tag_r.Px() + MET_r.Py()*tag_r.Py()) / pow((tag_r.Pt()),2);
@@ -1233,13 +1229,11 @@ void CMSJES::Loop()
     //Fill MPF profile
     prMPF->Fill(tag_r.Pt(), R_MPF_r, new_weight);
 
-		if (found_manyB == false) {
-		  if (found_B0 == true) prMPF_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);	  
-		  if (found_Bp == true) prMPF_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);	  	  
-		  if (found_B0s == true) prMPF_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);	    
-		  if (found_Bb  == true) prMPF_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);	    
-		  if (found_nonB == true) prMPF_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);	  	  
-		}
+	  if (found_B0 == true) prMPF_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);	  
+	  if (found_Bp == true) prMPF_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);	  	  
+	  if (found_B0s == true) prMPF_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);	    
+	  if (found_Bb  == true) prMPF_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);	    
+	  if (found_nonB == true) prMPF_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);	  	  
 
     Rjet      = probe_r.Pt()/probe_g.Pt();
     Rjet_calo = probe_calo.Pt()/probe_g.Pt(); 
@@ -1247,13 +1241,11 @@ void CMSJES::Loop()
     //All jets
     prRjet->Fill(probe_g.Pt(), Rjet, new_weight);
 
-		if (found_manyB == false) {
-	    if (found_B0 == true) prRjet_B0->Fill(probe_g.Pt(), Rjet, new_weight);
-	    if (found_Bp == true) prRjet_Bp->Fill(probe_g.Pt(), Rjet, new_weight); 
-	    if (found_B0s == true) prRjet_B0s->Fill(probe_g.Pt(), Rjet, new_weight); 
-	    if (found_Bb == true) prRjet_Bb->Fill(probe_g.Pt(), Rjet, new_weight); 
-	    if (found_nonB == true) prRjet_nonB->Fill(probe_g.Pt(), Rjet, new_weight); 
-		}
+    if (found_B0 == true) prRjet_B0->Fill(probe_g.Pt(), Rjet, new_weight);
+    if (found_Bp == true) prRjet_Bp->Fill(probe_g.Pt(), Rjet, new_weight); 
+    if (found_B0s == true) prRjet_B0s->Fill(probe_g.Pt(), Rjet, new_weight); 
+    if (found_Bb == true) prRjet_Bb->Fill(probe_g.Pt(), Rjet, new_weight); 
+    if (found_nonB == true) prRjet_nonB->Fill(probe_g.Pt(), Rjet, new_weight); 
 
     prRjet_calo->Fill(probe_g.Pt(), Rjet_calo, new_weight);
 
@@ -1273,134 +1265,130 @@ void CMSJES::Loop()
 					prRjetb->Fill(probe_g.Pt(), Rjet, new_weight);
 					prpTbalb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 
-					if (found_manyB == false) {
-						if (found_B0 == true) {
-							prMPFb_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-							prRjetb_B0->Fill(probe_g.Pt(), Rjet, new_weight);
-							prpTbalb_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-						}				
-						if (found_Bp == true) {
-							prMPFb_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-							prRjetb_Bp->Fill(probe_g.Pt(), Rjet, new_weight);
-							prpTbalb_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-						}
-						if (found_B0s == true) {
-							prMPFb_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-							prRjetb_B0s->Fill(probe_g.Pt(), Rjet, new_weight);
-							prpTbalb_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-						}
-						if (found_Bb == true) {
-							prMPFb_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-							prRjetb_Bb->Fill(probe_g.Pt(), Rjet, new_weight);
-							prpTbalb_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-						}
-						if (found_nonB == true) {
-							prMPFb_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-							prRjetb_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
-							prpTbalb_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-						}
+					if (found_B0 == true) {
+						prMPFb_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetb_B0->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalb_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}				
+					if (found_Bp == true) {
+						prMPFb_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetb_Bp->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalb_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 					}
-					//fill semileptonic related histograms	
+					if (found_B0s == true) {
+						prMPFb_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetb_B0s->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalb_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_Bb == true) {
+						prMPFb_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetb_Bb->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalb_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_nonB == true) {
+						prMPFb_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetb_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalb_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+
+					//fill the semileptonic related histograms	
 					if (semilep_decay) {
 						FFb_slep->Fill(tag_r.Pt(), new_weight);
 						prMPFb_slep->Fill(tag_r.Pt(), R_MPF_r, new_weight);
 						prRjetb_slep->Fill(probe_g.Pt(), Rjet, new_weight);
 						prpTbalb_slep->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 
-						if (found_manyB == false) {
-							if (found_B0 == true) {
-								prMPFb_slep_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetb_slep_B0->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalb_slep_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}				
-							if (found_Bp == true) {
-								prMPFb_slep_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetb_slep_Bp->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalb_slep_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-							if (found_B0s == true) {
-								prMPFb_slep_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetb_slep_B0s->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalb_slep_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-							if (found_Bb == true) {
-								prMPFb_slep_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetb_slep_Bb->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalb_slep_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-							if (found_nonB == true) {
-								prMPFb_slep_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetb_slep_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalb_slep_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
+						if (found_B0 == true) {
+							prMPFb_slep_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetb_slep_B0->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalb_slep_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}				
+						if (found_Bp == true) {
+							prMPFb_slep_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetb_slep_Bp->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalb_slep_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 						}
+						if (found_B0s == true) {
+							prMPFb_slep_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetb_slep_B0s->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalb_slep_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_Bb == true) {
+							prMPFb_slep_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetb_slep_Bb->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalb_slep_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_nonB == true) {
+							prMPFb_slep_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetb_slep_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalb_slep_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+
+					//fill the non-semileptonic related histograms	
 					} else {
 						FFb_non_slep->Fill(tag_r.Pt(), new_weight);
 						prMPFb_non_slep->Fill(tag_r.Pt(), R_MPF_r, new_weight);
 						prRjetb_non_slep->Fill(probe_g.Pt(), Rjet, new_weight);
 						prpTbalb_non_slep->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 
-						if (found_manyB == false) {
-							if (found_B0 == true) {
-								prMPFb_non_slep_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetb_non_slep_B0->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalb_non_slep_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}				
-							if (found_Bp == true) {
-								prMPFb_non_slep_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetb_non_slep_Bp->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalb_non_slep_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-							if (found_B0s == true) {
-								prMPFb_non_slep_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetb_non_slep_B0s->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalb_non_slep_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-							if (found_Bb == true) {
-								prMPFb_non_slep_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetb_non_slep_Bb->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalb_non_slep_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-							if (found_nonB == true) {
-								prMPFb_non_slep_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetb_non_slep_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalb_non_slep_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
+						if (found_B0 == true) {
+							prMPFb_non_slep_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetb_non_slep_B0->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalb_non_slep_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}				
+						if (found_Bp == true) {
+							prMPFb_non_slep_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetb_non_slep_Bp->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalb_non_slep_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_B0s == true) {
+							prMPFb_non_slep_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetb_non_slep_B0s->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalb_non_slep_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_Bb == true) {
+							prMPFb_non_slep_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetb_non_slep_Bb->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalb_non_slep_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_nonB == true) {
+							prMPFb_non_slep_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetb_non_slep_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalb_non_slep_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 						}
 					}
+
 				} else if (probeFlav < 5) {                     //Light quark (u,d,s,c) jets
 					FFlq->Fill(tag_r.Pt(), new_weight);
 					prMPFlq->Fill(tag_r.Pt(), R_MPF_r, new_weight);
 					prRjetlq->Fill(probe_g.Pt(), Rjet, new_weight);
 					prpTballq->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 
-					if (found_manyB == false) {
-						if (found_B0 == true) {
-							prMPFlq_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-							prRjetlq_B0->Fill(probe_g.Pt(), Rjet, new_weight);
-							prpTballq_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-						}				
-						if (found_Bp == true) {
-							prMPFlq_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-							prRjetlq_Bp->Fill(probe_g.Pt(), Rjet, new_weight);
-							prpTballq_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-						}
-						if (found_B0s == true) {
-							prMPFlq_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-							prRjetlq_B0s->Fill(probe_g.Pt(), Rjet, new_weight);
-							prpTballq_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-						}
-						if (found_Bb == true) {
-							prMPFlq_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-							prRjetlq_Bb->Fill(probe_g.Pt(), Rjet, new_weight);
-							prpTballq_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-						}
-						if (found_nonB == true) {
-							prMPFlq_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-							prRjetlq_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
-							prpTballq_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-						}
-					}		
+					if (found_B0 == true) {
+						prMPFlq_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetlq_B0->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTballq_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}				
+					if (found_Bp == true) {
+						prMPFlq_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetlq_Bp->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTballq_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_B0s == true) {
+						prMPFlq_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetlq_B0s->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTballq_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_Bb == true) {
+						prMPFlq_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetlq_Bb->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTballq_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_nonB == true) {
+						prMPFlq_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetlq_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTballq_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
 
 					if (probeFlav == 4) {                         //c-jets
 						FFc->Fill(tag_r.Pt(), new_weight);
@@ -1408,133 +1396,129 @@ void CMSJES::Loop()
 						prRjetc->Fill(probe_g.Pt(), Rjet, new_weight);  
 						prpTbalc->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);  
 
-						if (found_manyB == false) {
-							if (found_B0 == true) {
-								prMPFc_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetc_B0->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalc_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}				
-							if (found_Bp == true) {
-								prMPFc_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetc_Bp->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalc_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-							if (found_B0s == true) {
-								prMPFc_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetc_B0s->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalc_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-							if (found_Bb == true) {
-								prMPFc_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetc_Bb->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalc_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-							if (found_nonB == true) {
-								prMPFc_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetc_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalc_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-						}   
+						if (found_B0 == true) {
+							prMPFc_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetc_B0->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalc_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}				
+						if (found_Bp == true) {
+							prMPFc_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetc_Bp->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalc_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_B0s == true) {
+							prMPFc_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetc_B0s->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalc_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_Bb == true) {
+							prMPFc_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetc_Bb->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalc_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_nonB == true) {
+							prMPFc_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetc_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalc_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+
 					} else if (probeFlav == 3) {                  //s-jets
 						FFs->Fill(tag_r.Pt(), new_weight);
 						prMPFs->Fill(tag_r.Pt(), R_MPF_r, new_weight);
 						prRjets->Fill(probe_g.Pt(), Rjet, new_weight);  
 						prpTbals->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);    
 
-						if (found_manyB == false) {
-							if (found_B0 == true) {
-								prMPFs_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjets_B0->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbals_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}				
-							if (found_Bp == true) {
-								prMPFs_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjets_Bp->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbals_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-							if (found_B0s == true) {
-								prMPFs_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjets_B0s->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbals_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-							if (found_Bb == true) {
-								prMPFs_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjets_Bb->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbals_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-							if (found_nonB == true) {
-								prMPFs_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjets_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbals_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-						}     
+						if (found_B0 == true) {
+							prMPFs_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjets_B0->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbals_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}				
+						if (found_Bp == true) {
+							prMPFs_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjets_Bp->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbals_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_B0s == true) {
+							prMPFs_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjets_B0s->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbals_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_Bb == true) {
+							prMPFs_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjets_Bb->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbals_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_nonB == true) {
+							prMPFs_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjets_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbals_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+
 					} else if (probeFlav < 3) {                   //(u,d)
 						FFud->Fill(tag_r.Pt(), new_weight);
 						prMPFud->Fill(tag_r.Pt(), R_MPF_r, new_weight);
 						prRjetud->Fill(probe_g.Pt(), Rjet, new_weight);  
 						prpTbalud->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 
-						if (found_manyB == false) {
-							if (found_B0 == true) {
-								prMPFud_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetud_B0->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalud_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}				
-							if (found_Bp == true) {
-								prMPFud_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetud_Bp->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalud_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-							if (found_B0s == true) {
-								prMPFud_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetud_B0s->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalud_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-							if (found_Bb == true) {
-								prMPFud_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetud_Bb->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalud_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-							if (found_nonB == true) {
-								prMPFud_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-								prRjetud_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
-								prpTbalud_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-							}
-						}  
+						if (found_B0 == true) {
+							prMPFud_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetud_B0->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalud_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}				
+						if (found_Bp == true) {
+							prMPFud_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetud_Bp->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalud_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_B0s == true) {
+							prMPFud_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetud_B0s->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalud_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_Bb == true) {
+							prMPFud_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetud_Bb->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalud_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_nonB == true) {
+							prMPFud_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetud_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalud_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
 					}
+
 				} else if (probeFlav == 21) {                   //Gluon jets
 					FFg->Fill(tag_r.Pt(), new_weight);
 					prMPFg->Fill(tag_r.Pt(), R_MPF_r, new_weight);
 					prRjetg->Fill(probe_g.Pt(), Rjet, new_weight);
 					prpTbalg->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 
-					if (found_manyB == false) {
-						if (found_B0 == true) {
-							prMPFg_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-							prRjetg_B0->Fill(probe_g.Pt(), Rjet, new_weight);
-							prpTbalg_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-						}				
-						if (found_Bp == true) {
-							prMPFg_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-							prRjetg_Bp->Fill(probe_g.Pt(), Rjet, new_weight);
-							prpTbalg_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-						}
-						if (found_B0s == true) {
-							prMPFg_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-							prRjetg_B0s->Fill(probe_g.Pt(), Rjet, new_weight);
-							prpTbalg_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-						}
-						if (found_Bb == true) {
-							prMPFg_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-							prRjetg_Bb->Fill(probe_g.Pt(), Rjet, new_weight);
-							prpTbalg_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-						}
-						if (found_nonB == true) {
-							prMPFg_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
-							prRjetg_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
-							prpTbalg_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-						}
+					if (found_B0 == true) {
+						prMPFg_B0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetg_B0->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalg_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}				
+					if (found_Bp == true) {
+						prMPFg_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetg_Bp->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalg_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 					}
+					if (found_B0s == true) {
+						prMPFg_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetg_B0s->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalg_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_Bb == true) {
+						prMPFg_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetg_Bb->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalg_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_nonB == true) {
+						prMPFg_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetg_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalg_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+
 				} else continue; //Undetermined flavour
 				FFa->Fill(tag_r.Pt(), new_weight); continue;
 			}
