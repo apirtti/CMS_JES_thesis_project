@@ -13,8 +13,9 @@ void CMSJES::Loop()
   varTrkEff = 0;
   varPhoton = 0;
 
-  //Flag for B-hadron weighting
-  bool B_had_weighting = 1;
+  //Flags for B- and C-hadron weighting
+  bool B_had_weighting = 0;
+  bool C_had_weighting = 1;
 
   if (varCp3 && varCm3) {cout << "Both C-variants enabled!" << endl; return;}
 
@@ -44,6 +45,7 @@ void CMSJES::Loop()
   if (varTrkEff) 	   outname += "_varTrkEff";
   if (varPhoton) 	   outname += "_varPhoton";
   if (B_had_weighting) outname += "_BhadWeight";
+  if (C_had_weighting) outname += "_ChadWeight";
 
   outname += ".root";
   TFile *fout = new TFile(outname.c_str(),"RECREATE");
@@ -66,6 +68,8 @@ void CMSJES::Loop()
   TProfile* prpTbalud         = new TProfile("prpTbalud", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
   TProfile* prpTbals          = new TProfile("prpTbals", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
   TProfile* prpTbalc          = new TProfile("prpTbalc", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalc_non_slep = new TProfile("prpTbalc_non_slep", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalc_slep     = new TProfile("prpTbalc_slep", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
 
   //pT-balances for different B-hadron categories for the error calculations
   //*B0 = B^0, *Bp = B^+, *B0s = B^0_s, *Bb = b-baryons, *nonB = probe doesn't contain B-hadrons
@@ -119,6 +123,59 @@ void CMSJES::Loop()
   TProfile* prpTbals_nonB          = new TProfile("prpTbals_nonB", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
   TProfile* prpTbalc_nonB          = new TProfile("prpTbalc_nonB", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
 
+  //pT-balances for different C-hadron categories for the error calculations
+  //*D0 = D^0, *Dp = D^+, *Dps = D^+_s, *Cb = c-baryons, *nonC = probe doesn't contain C-hadrons
+  TProfile* prpTbal_D0           = new TProfile("prpTbal_D0", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalb_D0          = new TProfile("prpTbalb_D0", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalg_D0          = new TProfile("prpTbalg_D0", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTballq_D0         = new TProfile("prpTballq_D0", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalud_D0         = new TProfile("prpTbalud_D0", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbals_D0          = new TProfile("prpTbals_D0", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalc_D0          = new TProfile("prpTbalc_D0", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalc_non_slep_D0 = new TProfile("prpTbalc_non_slep_D0", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalc_slep_D0     = new TProfile("prpTbalc_slep_D0", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+
+  TProfile* prpTbal_Dp           = new TProfile("prpTbal_Dp", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalb_Dp          = new TProfile("prpTbalb_Dp", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalg_Dp          = new TProfile("prpTbalg_Dp", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTballq_Dp         = new TProfile("prpTballq_Dp", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalud_Dp         = new TProfile("prpTbalud_Dp", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbals_Dp          = new TProfile("prpTbals_Dp", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalc_Dp          = new TProfile("prpTbalc_Dp", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalc_non_slep_Dp = new TProfile("prpTbalc_non_slep_Dp", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalc_slep_Dp     = new TProfile("prpTbalc_slep_Dp", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+
+  TProfile* prpTbal_Dps           = new TProfile("prpTbal_Dps", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalb_Dps          = new TProfile("prpTbalb_Dps", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalg_Dps          = new TProfile("prpTbalg_Dps", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTballq_Dps         = new TProfile("prpTballq_Dps", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalud_Dps         = new TProfile("prpTbalud_Dps", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbals_Dps          = new TProfile("prpTbals_Dps", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalc_Dps          = new TProfile("prpTbalc_Dps", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalc_non_slep_Dps = new TProfile("prpTbalc_non_slep_Dps", pTbalTitle.c_str(), nbinsMPF-1,binsxMPF);
+  TProfile* prpTbalc_slep_Dps     = new TProfile("prpTbalc_slep_Dps", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+
+  TProfile* prpTbal_Cb           = new TProfile("prpTbal_Cb", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalb_Cb          = new TProfile("prpTbalb_Cb", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalg_Cb          = new TProfile("prpTbalg_Cb", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTballq_Cb         = new TProfile("prpTballq_Cb", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalud_Cb         = new TProfile("prpTbalud_Cb", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbals_Cb          = new TProfile("prpTbals_Cb", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalc_Cb          = new TProfile("prpTbalc_Cb", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalc_non_slep_Cb = new TProfile("prpTbalc_non_slep_Cb", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalc_slep_Cb     = new TProfile("prpTbalc_slep_Cb", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+
+  TProfile* prpTbal_nonC           = new TProfile("prpTbal_nonC", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalb_nonC          = new TProfile("prpTbalb_nonC", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalg_nonC          = new TProfile("prpTbalg_nonC", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTballq_nonC         = new TProfile("prpTballq_nonC", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalud_nonC         = new TProfile("prpTbalud_nonC", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbals_nonC          = new TProfile("prpTbals_nonC", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalc_nonC          = new TProfile("prpTbalc_nonC", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prpTbalc_non_slep_nonC = new TProfile("prpTbalc_non_slep_nonC", pTbalTitle.c_str(), nbinsMPF-1,binsxMPF);
+  TProfile* prpTbalc_slep_nonC     = new TProfile("prpTbalc_slep_nonC", pTbalTitle.c_str(), nbinsMPF-1, binsxMPF);
+
+
   //Jet flavour dependent MPF responses *b = b-jets, *g = g-jets, *lq=(u,d,s,c)-jets
   //*_non_slep = jet doesn't contain semileptonic decay
   string MPFTitle = ";p_{T,tag}^{MC} [GeV];R_{MPF}";
@@ -131,6 +188,8 @@ void CMSJES::Loop()
   TProfile* prMPFud          = new TProfile("prMPFud", MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
   TProfile* prMPFs           = new TProfile("prMPFs" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
   TProfile* prMPFc           = new TProfile("prMPFc" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_non_slep  = new TProfile("prMPFc_non_slep" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_slep      = new TProfile("prMPFc_slep" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
 
   //MPF responses for different B-hadron categories for the error calculations
   TProfile* prMPF_B0            = new TProfile("prMPF_B0"  , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
@@ -183,6 +242,57 @@ void CMSJES::Loop()
   TProfile* prMPFs_nonB           = new TProfile("prMPFs_nonB" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
   TProfile* prMPFc_nonB           = new TProfile("prMPFc_nonB" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
 
+  //MPF responses for different C-hadron categories for the error calculations
+  TProfile* prMPF_D0            = new TProfile("prMPF_D0"  , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFb_D0           = new TProfile("prMPFb_D0" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFg_D0           = new TProfile("prMPFg_D0" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFlq_D0          = new TProfile("prMPFlq_D0", MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFud_D0          = new TProfile("prMPFud_D0", MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFs_D0           = new TProfile("prMPFs_D0" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_D0           = new TProfile("prMPFc_D0" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_non_slep_D0  = new TProfile("prMPFc_non_slep_D0" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_slep_D0      = new TProfile("prMPFc_slep_D0" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+
+  TProfile* prMPF_Dp            = new TProfile("prMPF_Dp"  , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFb_Dp           = new TProfile("prMPFb_Dp" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFg_Dp           = new TProfile("prMPFg_Dp" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFlq_Dp          = new TProfile("prMPFlq_Dp", MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFud_Dp          = new TProfile("prMPFud_Dp", MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFs_Dp           = new TProfile("prMPFs_Dp" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_Dp           = new TProfile("prMPFc_Dp" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_non_slep_Dp  = new TProfile("prMPFc_non_slep_Dp" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_slep_Dp      = new TProfile("prMPFc_slep_Dp" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+
+  TProfile* prMPF_Dps            = new TProfile("prMPF_Dps"  , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFb_Dps           = new TProfile("prMPFb_Dps" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFg_Dps           = new TProfile("prMPFg_Dps" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFlq_Dps          = new TProfile("prMPFlq_Dps", MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFud_Dps          = new TProfile("prMPFud_Dps", MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFs_Dps           = new TProfile("prMPFs_Dps" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_Dps           = new TProfile("prMPFc_Dps" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_non_slep_Dps  = new TProfile("prMPFc_non_slep_Dps" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_slep_Dps      = new TProfile("prMPFc_slep_Dps" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+
+  TProfile* prMPF_Cb            = new TProfile("prMPF_Cb"  , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFb_Cb           = new TProfile("prMPFb_Cb" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFg_Cb           = new TProfile("prMPFg_Cb" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFlq_Cb          = new TProfile("prMPFlq_Cb", MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFud_Cb          = new TProfile("prMPFud_Cb", MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFs_Cb           = new TProfile("prMPFs_Cb" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_Cb           = new TProfile("prMPFc_Cb" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_non_slep_Cb  = new TProfile("prMPFc_non_slep_Cb" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_slep_Cb      = new TProfile("prMPFc_slep_Cb" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+
+  TProfile* prMPF_nonC            = new TProfile("prMPF_nonC"  , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFb_nonC           = new TProfile("prMPFb_nonC" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFg_nonC           = new TProfile("prMPFg_nonC" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFlq_nonC          = new TProfile("prMPFlq_nonC", MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFud_nonC          = new TProfile("prMPFud_nonC", MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFs_nonC           = new TProfile("prMPFs_nonC" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_nonC           = new TProfile("prMPFc_nonC" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_non_slep_nonC  = new TProfile("prMPFc_non_slep_nonC" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prMPFc_slep_nonC      = new TProfile("prMPFc_slep_nonC" , MPFTitle.c_str(), nbinsMPF-1, binsxMPF);
+
   //Jet response
   string RjetTitle    = ";p_{T,gen}^{jet} [GeV]";
          RjetTitle   += ";p_{T,reco}^{jet} / p_{T,gen}^{jet}";
@@ -211,6 +321,8 @@ void CMSJES::Loop()
   TProfile* prRjetud          = new TProfile("prRjetud", RjetudTitle.c_str(), nbinsMPF-1, binsxMPF);
   TProfile* prRjets           = new TProfile("prRjets",  RjetsTitle.c_str(),  nbinsMPF-1, binsxMPF);
   TProfile* prRjetc           = new TProfile("prRjetc",  RjetcTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_non_slep  = new TProfile("prRjetc_non_slep",  RjetbTitle_non_slep.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_slep      = new TProfile("prRjetc_slep",  RjetbTitle_slep.c_str(),  nbinsMPF-1, binsxMPF);
 
   //Jet responses for different B-hadron categories for the error calculations
   TProfile* prRjet_B0            = new TProfile("prRjet_B0",   RjetTitle.c_str(),   nbinsMPF-1, binsxMPF);
@@ -263,13 +375,72 @@ void CMSJES::Loop()
   TProfile* prRjets_nonB           = new TProfile("prRjets_nonB",  RjetsTitle.c_str(),  nbinsMPF-1, binsxMPF);
   TProfile* prRjetc_nonB           = new TProfile("prRjetc_nonB",  RjetcTitle.c_str(),  nbinsMPF-1, binsxMPF);
 
+  //Jet responses for different C-hadron categories for the error calculations
+  TProfile* prRjet_D0            = new TProfile("prRjet_D0",   RjetTitle.c_str(),   nbinsMPF-1, binsxMPF);
+  TProfile* prRjetb_D0           = new TProfile("prRjetb_D0",  RjetbTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetg_D0           = new TProfile("prRjetg_D0",  RjetgTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetlq_D0          = new TProfile("prRjetlq_D0", RjetlqTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prRjetud_D0          = new TProfile("prRjetud_D0", RjetudTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prRjets_D0           = new TProfile("prRjets_D0",  RjetsTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_D0           = new TProfile("prRjetc_D0",  RjetcTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_non_slep_D0  = new TProfile("prRjetc_non_slep_D0",  RjetbTitle_non_slep.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_slep_D0      = new TProfile("prRjetc_slep_D0",  RjetbTitle_slep.c_str(),  nbinsMPF-1, binsxMPF);
+
+  TProfile* prRjet_Dp            = new TProfile("prRjet_Dp",   RjetTitle.c_str(),   nbinsMPF-1, binsxMPF);
+  TProfile* prRjetb_Dp           = new TProfile("prRjetb_Dp",  RjetbTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetg_Dp           = new TProfile("prRjetg_Dp",  RjetgTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetlq_Dp          = new TProfile("prRjetlq_Dp", RjetlqTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prRjetud_Dp          = new TProfile("prRjetud_Dp", RjetudTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prRjets_Dp           = new TProfile("prRjets_Dp",  RjetsTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_Dp           = new TProfile("prRjetc_Dp",  RjetcTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_non_slep_Dp  = new TProfile("prRjetc_non_slep_Dp",  RjetbTitle_non_slep.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_slep_Dp      = new TProfile("prRjetc_slep_Dp",  RjetbTitle_slep.c_str(),  nbinsMPF-1, binsxMPF);
+
+  TProfile* prRjet_Dps            = new TProfile("prRjet_Dps",   RjetTitle.c_str(),   nbinsMPF-1, binsxMPF);
+  TProfile* prRjetb_Dps           = new TProfile("prRjetb_Dps",  RjetbTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetg_Dps           = new TProfile("prRjetg_Dps",  RjetgTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetlq_Dps          = new TProfile("prRjetlq_Dps", RjetlqTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prRjetud_Dps          = new TProfile("prRjetud_Dps", RjetudTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prRjets_Dps           = new TProfile("prRjets_Dps",  RjetsTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_Dps           = new TProfile("prRjetc_Dps",  RjetcTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_non_slep_Dps  = new TProfile("prRjetc_non_slep_Dps",  RjetbTitle_non_slep.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_slep_Dps      = new TProfile("prRjetc_slep_Dps",  RjetbTitle_slep.c_str(),  nbinsMPF-1, binsxMPF);
+
+  TProfile* prRjet_Cb            = new TProfile("prRjet_Cb",   RjetTitle.c_str(),   nbinsMPF-1, binsxMPF);
+  TProfile* prRjetb_Cb           = new TProfile("prRjetb_Cb",  RjetbTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetg_Cb           = new TProfile("prRjetg_Cb",  RjetgTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetlq_Cb          = new TProfile("prRjetlq_Cb", RjetlqTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prRjetud_Cb          = new TProfile("prRjetud_Cb", RjetudTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prRjets_Cb           = new TProfile("prRjets_Cb",  RjetsTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_Cb           = new TProfile("prRjetc_Cb",  RjetcTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_non_slep_Cb  = new TProfile("prRjetc_non_slep_Cb",  RjetbTitle_non_slep.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_slep_Cb      = new TProfile("prRjetc_slep_Cb",  RjetbTitle_slep.c_str(),  nbinsMPF-1, binsxMPF);
+
+  TProfile* prRjet_nonC            = new TProfile("prRjet_nonC",   RjetTitle.c_str(),   nbinsMPF-1, binsxMPF);
+  TProfile* prRjetb_nonC           = new TProfile("prRjetb_nonC",  RjetbTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetg_nonC           = new TProfile("prRjetg_nonC",  RjetgTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetlq_nonC          = new TProfile("prRjetlq_nonC", RjetlqTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prRjetud_nonC          = new TProfile("prRjetud_nonC", RjetudTitle.c_str(), nbinsMPF-1, binsxMPF);
+  TProfile* prRjets_nonC           = new TProfile("prRjets_nonC",  RjetsTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_nonC           = new TProfile("prRjetc_nonC",  RjetcTitle.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_non_slep_nonC  = new TProfile("prRjetc_non_slep_nonC",  RjetbTitle_non_slep.c_str(),  nbinsMPF-1, binsxMPF);
+  TProfile* prRjetc_slep_nonC      = new TProfile("prRjetc_slep_nonC",  RjetbTitle_slep.c_str(),  nbinsMPF-1, binsxMPF);
+
 
   TProfile* prRjet_calo  = new TProfile("prRjet_calo",  RjetcTitle.c_str(),  nbinsMPF-1, binsxMPF);
 
   //Save the sum of weight square for the TProfiles
   prpTbal->Sumw2();              prpTbalb->Sumw2();             prpTbalb_non_slep->Sumw2();    prpTbalb_slep->Sumw2();
   prpTbalg->Sumw2();             prpTballq->Sumw2();            prpTbalud->Sumw2();            prpTbals->Sumw2();
-  prpTbalc->Sumw2();             prpTbal_B0->Sumw2();           prpTbalb_B0->Sumw2();          prpTbalb_non_slep_B0->Sumw2();
+  prpTbalc->Sumw2();						 prpTbalc_non_slep->Sumw2();    prpTbalc_slep->Sumw2();				 prMPF->Sumw2();                
+	prMPFb->Sumw2();			   			 prMPFb_non_slep->Sumw2();			prMPFb_slep->Sumw2();          prMPFg->Sumw2();               
+	prMPFlq->Sumw2();			   			 prMPFud->Sumw2();              prMPFs->Sumw2();               prMPFc->Sumw2();
+	prMPFc_non_slep->Sumw2();			 prMPFc_slep->Sumw2();					prRjet->Sumw2();               prRjetb->Sumw2();
+	prRjetb_non_slep->Sumw2();     prRjetb_slep->Sumw2();					prRjetg->Sumw2();              prRjetlq->Sumw2();							
+	prRjetud->Sumw2();             prRjets->Sumw2(); 							prRjetc->Sumw2();							 prRjetc_non_slep->Sumw2();
+  prRjetc_slep->Sumw2();
+
+  prpTbal_B0->Sumw2();           prpTbalb_B0->Sumw2();          prpTbalb_non_slep_B0->Sumw2(); prpTbalc_nonB->Sumw2();
   prpTbalb_slep_B0->Sumw2();     prpTbalg_B0->Sumw2();          prpTballq_B0->Sumw2();         prpTbalud_B0->Sumw2();
   prpTbals_B0->Sumw2();          prpTbalc_B0->Sumw2();          prpTbal_Bp->Sumw2();           prpTbalb_Bp->Sumw2();
   prpTbalb_non_slep_Bp->Sumw2(); prpTbalg_Bp->Sumw2();          prpTbalb_slep_Bp->Sumw2();     prpTballq_Bp->Sumw2();
@@ -280,9 +451,7 @@ void CMSJES::Loop()
   prpTbalg_Bb->Sumw2();          prpTballq_Bb->Sumw2();         prpTbalud_Bb->Sumw2();         prpTbals_Bb->Sumw2();
   prpTbalc_Bb->Sumw2();          prpTbal_nonB->Sumw2();         prpTbalb_nonB->Sumw2();        prpTbalb_non_slep_nonB->Sumw2();
   prpTbalb_slep_nonB->Sumw2();   prpTbalg_nonB->Sumw2();        prpTballq_nonB->Sumw2();       prpTbalud_nonB->Sumw2();
-  prpTbals_nonB->Sumw2();        prpTbalc_nonB->Sumw2();        prMPF->Sumw2();                prMPFb->Sumw2();
-  prMPFb_non_slep->Sumw2();      prMPFb_slep->Sumw2();          prMPFg->Sumw2();               prMPFlq->Sumw2();
-  prMPFud->Sumw2();              prMPFs->Sumw2();               prMPFc->Sumw2();               prMPF_B0->Sumw2();
+  prpTbals_nonB->Sumw2();        prMPFb_non_slep->Sumw2();      prMPFb_slep->Sumw2();          prMPF_B0->Sumw2();
   prMPFb_B0->Sumw2();            prMPFb_non_slep_B0->Sumw2();   prMPFb_slep_B0->Sumw2();       prMPFg_B0->Sumw2();
   prMPFlq_B0->Sumw2();           prMPFud_B0->Sumw2();           prMPFs_B0->Sumw2();            prMPFc_B0->Sumw2();
   prMPF_Bp->Sumw2();             prMPFb_Bp->Sumw2();            prMPFb_non_slep_Bp->Sumw2();   prMPFb_slep_Bp->Sumw2();
@@ -294,9 +463,7 @@ void CMSJES::Loop()
   prMPFud_Bb->Sumw2();           prMPFs_Bb->Sumw2();            prMPFc_Bb->Sumw2();            prMPF_nonB->Sumw2();
   prMPFb_nonB->Sumw2();          prMPFb_non_slep_nonB->Sumw2(); prMPFb_slep_nonB->Sumw2();     prMPFg_nonB->Sumw2();
   prMPFlq_nonB->Sumw2();         prMPFud_nonB->Sumw2();         prMPFs_nonB->Sumw2();          prMPFc_nonB->Sumw2();
-  prRjet->Sumw2();               prRjetb->Sumw2();              prRjetb_non_slep->Sumw2();           prRjetb_slep->Sumw2();
-  prRjetg->Sumw2();              prRjetlq->Sumw2();             prRjetud->Sumw2();             prRjets->Sumw2();
-  prRjetc->Sumw2();              prRjet_B0->Sumw2();            prRjetb_B0->Sumw2();           prRjetb_non_slep_B0->Sumw2();
+  prRjetb_non_slep->Sumw2();     prRjetb_slep->Sumw2();         prRjet_B0->Sumw2();            prRjetb_B0->Sumw2();
   prRjetb_slep_B0->Sumw2();      prRjetg_B0->Sumw2();           prRjetlq_B0->Sumw2();          prRjetud_B0->Sumw2();
   prRjets_B0->Sumw2();           prRjetc_B0->Sumw2();           prRjet_Bp->Sumw2();            prRjetb_Bp->Sumw2();
   prRjetb_non_slep_Bp->Sumw2();  prRjetb_slep_Bp->Sumw2();      prRjetg_Bp->Sumw2();           prRjetlq_Bp->Sumw2();
@@ -307,7 +474,43 @@ void CMSJES::Loop()
   prRjetg_Bb->Sumw2();           prRjetlq_Bb->Sumw2();          prRjetud_Bb->Sumw2();          prRjets_Bb->Sumw2();
   prRjetc_Bb->Sumw2();           prRjet_nonB->Sumw2();          prRjetb_nonB->Sumw2();         prRjetb_non_slep_nonB->Sumw2();
   prRjetb_slep_nonB->Sumw2();    prRjetg_nonB->Sumw2();         prRjetlq_nonB->Sumw2();        prRjetud_nonB->Sumw2();
-  prRjets_nonB->Sumw2();         prRjetc_nonB->Sumw2();         prRjet_calo->Sumw2();
+  prRjets_nonB->Sumw2();         prRjetc_nonB->Sumw2();         prRjet_calo->Sumw2();		       prRjetb_non_slep_B0->Sumw2();
+
+  prpTbal_D0->Sumw2();           prpTbalb_D0->Sumw2();          prpTbalc_non_slep_D0->Sumw2(); prpTbalc_nonC->Sumw2();
+  prpTbalc_slep_D0->Sumw2();     prpTbalg_D0->Sumw2();          prpTballq_D0->Sumw2();         prpTbalud_D0->Sumw2();
+  prpTbals_D0->Sumw2();          prpTbalc_D0->Sumw2();          prpTbal_Dp->Sumw2();           prpTbalb_Dp->Sumw2();
+  prpTbalc_non_slep_Dp->Sumw2(); prpTbalg_Dp->Sumw2();          prpTbalc_slep_Dp->Sumw2();     prpTballq_Dp->Sumw2();
+  prpTbalud_Dp->Sumw2();         prpTbals_Dp->Sumw2();          prpTbalc_Dp->Sumw2();          prpTbal_Dps->Sumw2();
+  prpTbalb_Dps->Sumw2();         prpTbalg_Dps->Sumw2();         prpTbalc_slep_Dps->Sumw2();    prpTbalc_non_slep_Dps->Sumw2();
+  prpTballq_Dps->Sumw2();        prpTbalud_Dps->Sumw2();        prpTbals_Dps->Sumw2();         prpTbalc_Dps->Sumw2();
+  prpTbal_Cb->Sumw2();           prpTbalb_Cb->Sumw2();          prpTbalc_non_slep_Cb->Sumw2(); prpTbalc_slep_Cb->Sumw2();
+  prpTbalg_Cb->Sumw2();          prpTballq_Cb->Sumw2();         prpTbalud_Cb->Sumw2();         prpTbals_Cb->Sumw2();
+  prpTbalc_Cb->Sumw2();          prpTbal_nonC->Sumw2();         prpTbalc_nonC->Sumw2();        prpTbalc_non_slep_nonC->Sumw2();
+  prpTbalc_slep_nonC->Sumw2();   prpTbalg_nonC->Sumw2();        prpTballq_nonC->Sumw2();       prpTbalud_nonC->Sumw2();
+  prpTbals_nonC->Sumw2();        prMPFc_non_slep->Sumw2();      prMPFc_slep->Sumw2();          prMPF_D0->Sumw2();
+  prMPFb_D0->Sumw2();            prMPFc_non_slep_D0->Sumw2();   prMPFc_slep_D0->Sumw2();       prMPFg_D0->Sumw2();
+  prMPFlq_D0->Sumw2();           prMPFud_D0->Sumw2();           prMPFs_D0->Sumw2();            prMPFc_D0->Sumw2();
+  prMPF_Dp->Sumw2();             prMPFb_Dp->Sumw2();            prMPFc_non_slep_Dp->Sumw2();   prMPFc_slep_Dp->Sumw2();
+  prMPFg_Dp->Sumw2();            prMPFlq_Dp->Sumw2();           prMPFud_Dp->Sumw2();           prMPFs_Dp->Sumw2();
+  prMPFc_Dp->Sumw2();            prMPF_Dps->Sumw2();            prMPFb_Dps->Sumw2();           prMPFc_non_slep_Dps->Sumw2();
+  prMPFc_slep_Dps->Sumw2();      prMPFg_Dps->Sumw2();           prMPFlq_Dps->Sumw2();          prMPFud_Dps->Sumw2();
+  prMPFs_Dps->Sumw2();           prMPFc_Dps->Sumw2();           prMPF_Cb->Sumw2();             prMPFb_Cb->Sumw2();
+  prMPFc_non_slep_Cb->Sumw2();   prMPFc_slep_Cb->Sumw2();       prMPFg_Cb->Sumw2();            prMPFlq_Cb->Sumw2();
+  prMPFud_Cb->Sumw2();           prMPFs_Cb->Sumw2();            prMPFc_Cb->Sumw2();            prMPF_nonC->Sumw2();
+  prMPFc_nonC->Sumw2();          prMPFc_non_slep_nonC->Sumw2(); prMPFc_slep_nonC->Sumw2();     prMPFg_nonC->Sumw2();
+  prMPFlq_nonC->Sumw2();         prMPFud_nonC->Sumw2();         prMPFs_nonC->Sumw2();          prMPFc_nonC->Sumw2();
+  prRjetc_non_slep->Sumw2();     prRjetc_slep->Sumw2();         prRjet_D0->Sumw2();            prRjetb_D0->Sumw2();
+  prRjetc_slep_D0->Sumw2();      prRjetg_D0->Sumw2();           prRjetlq_D0->Sumw2();          prRjetud_D0->Sumw2();
+  prRjets_D0->Sumw2();           prRjetc_D0->Sumw2();           prRjet_Dp->Sumw2();            prRjetb_Dp->Sumw2();
+  prRjetc_non_slep_Dp->Sumw2();  prRjetc_slep_Dp->Sumw2();      prRjetg_Dp->Sumw2();           prRjetlq_Dp->Sumw2();
+  prRjetud_Dp->Sumw2();          prRjets_Dp->Sumw2();           prRjetc_Dp->Sumw2();           prRjet_Dps->Sumw2();
+  prRjetb_Dps->Sumw2();          prRjetc_non_slep_Dps->Sumw2(); prRjetc_slep_Dps->Sumw2();     prRjetg_Dps->Sumw2();
+  prRjetlq_Dps->Sumw2();         prRjetud_Dps->Sumw2();         prRjets_Dps->Sumw2();          prRjetc_Dps->Sumw2();
+  prRjet_Cb->Sumw2();            prRjetb_Cb->Sumw2();           prRjetc_non_slep_Cb->Sumw2();  prRjetc_slep_Cb->Sumw2();
+  prRjetg_Cb->Sumw2();           prRjetlq_Cb->Sumw2();          prRjetud_Cb->Sumw2();          prRjets_Cb->Sumw2();
+  prRjetc_Cb->Sumw2();           prRjet_nonC->Sumw2();          prRjetc_nonC->Sumw2();         prRjetc_non_slep_nonC->Sumw2();
+  prRjetc_slep_nonC->Sumw2();    prRjetg_nonC->Sumw2();         prRjetlq_nonC->Sumw2();        prRjetud_nonC->Sumw2();
+  prRjets_nonC->Sumw2();         prRjetc_nonC->Sumw2();         prRjetc_non_slep_D0->Sumw2();
 
   //Jet flavour fraction histos: FFb = b-jets, FFg = g-jets, FFlq=(u,d,s,c)-jets
   TH1D* FFb          = new TH1D("FFb",  "",nbinsMPF-1,binsxMPF);
@@ -317,6 +520,8 @@ void CMSJES::Loop()
   TH1D* FFud         = new TH1D("FFud", "",nbinsMPF-1,binsxMPF);
   TH1D* FFs          = new TH1D("FFs",  "",nbinsMPF-1,binsxMPF);
   TH1D* FFc          = new TH1D("FFc",  "",nbinsMPF-1,binsxMPF);
+  TH1D* FFc_non_slep = new TH1D("FFc_non_slep",  "",nbinsMPF-1,binsxMPF);
+  TH1D* FFc_slep     = new TH1D("FFc_slep",  "",nbinsMPF-1,binsxMPF);
   TH1D* FFlq         = new TH1D("FFlq", "",nbinsMPF-1,binsxMPF);
   TH1D* FFa          = new TH1D("FFa",  "",nbinsMPF-1,binsxMPF); //All
 	
@@ -412,17 +617,29 @@ void CMSJES::Loop()
 	bool found_Bb;
 	bool found_nonB;
 
+	//flags for different C-hadron categories
+	bool found_D0;
+	bool found_Dp;
+	bool found_Dps;
+	bool found_Cb;
+	bool found_nonC;
+
 	//Variable gets different values according to additional weights we want to use for the event
 	double additional_weight;
 
 	//Storing the highest pT for the "hardest" B-hadron in the event
 	double highest_pT;
 
-	//Additional weights for the different B-hadrons found in the probe jet
-	const double wB0 = 0.9318761619619224;
-	const double wBp = 0.9571803929651981;
+	//Additional weights for the different B- and C-hadrons found in the probe jet
+	const double wB0  = 0.9318761619619224;
+	const double wBp  = 0.9571803929651981;
 	const double wB0s = 1.0623430336597717;
-	const double wBb = 1.8550607321587425;
+	const double wBb  = 1.8550607321587425;
+
+	const double wD0  = 0.7806482143535646;
+	const double wDp  = 1.0086161571724412;
+	const double wDps = 0.7820060409966667;
+	const double wCb  = 2.2238680205738395;
 
   //Histograms to contain the gen level particle content in probe
   TH1F* h_e;      TH1F* h_mu;     TH1F* h_gamma;  TH1F* h_gpi0;
@@ -646,6 +863,9 @@ void CMSJES::Loop()
 	  found_B0 = false;	found_Bp = false;		found_B0s = false;
 	  found_Bb = false;	found_nonB = false;
 
+	  found_D0 = false;	found_Dp = false;		found_Dps = false;
+	  found_Cb = false;	found_nonC = false;
+
     jets_g.clear();
     njets = (unsigned long)jet_pt->size();
     jets_g.resize(njets);
@@ -828,47 +1048,78 @@ void CMSJES::Loop()
 	  
 		/********************** ADDITIONAL EVENT WEIGHTING  **********************/
 
-		//Loop through partons of the probe jet, as the hadrons are saved only in the parton level
-		for (unsigned int i=0; i!=prtn_pdgid->size(); ++i) {
-    	prtn_JI  = (*prtn_jet)[i];
-      prtn_PDG = abs((*prtn_pdgid)[i]);
+		if (B_had_weighting == true || C_had_weighting == true) {
 
-			//Finds the highest pT B-hadron
-      if (prtn_JI==i_probe) {
-				if (prtn_PDG == 511 && (*prtn_pt)[i] > highest_pT) {
-					highest_pT = (*prtn_pt)[i];
-					found_B0  = true;  found_Bp = false;
-					found_B0s = false; found_Bb = false;
-				} else if (prtn_PDG == 521 && (*prtn_pt)[i] > highest_pT) {
-					highest_pT = (*prtn_pt)[i];
-					found_Bp = true; 	 found_B0 = false;
-				  found_B0s = false; found_Bb = false;
-				} else if (prtn_PDG == 531 && (*prtn_pt)[i] > highest_pT) {
-					highest_pT = (*prtn_pt)[i];
-	  			found_B0s = true;  found_B0 = false;
-				  found_Bp  = false; found_Bb = false; 
-				} else if ((prtn_PDG > 5100 && prtn_PDG < 5560) && (*prtn_pt)[i] > highest_pT) {
-					highest_pT = (*prtn_pt)[i];
-			    found_Bb = true;  found_B0 = false;
-				  found_Bp = false; found_B0s = false; 
+			//Loop through partons of the probe jet, as the hadrons are saved only in the parton level
+			for (unsigned int i=0; i!=prtn_pdgid->size(); ++i) {
+		  	prtn_JI  = (*prtn_jet)[i];
+		    prtn_PDG = abs((*prtn_pdgid)[i]);
+
+				if (B_had_weighting == true) {
+					//Finds the highest pT B-hadron
+				  if (prtn_JI==i_probe) {
+						if (prtn_PDG == 511 && (*prtn_pt)[i] > highest_pT) {
+							highest_pT = (*prtn_pt)[i];
+							found_B0  = true;  found_Bp = false;
+							found_B0s = false; found_Bb = false;
+						} else if (prtn_PDG == 521 && (*prtn_pt)[i] > highest_pT) {
+							highest_pT = (*prtn_pt)[i];
+							found_Bp = true; 	 found_B0 = false;
+							found_B0s = false; found_Bb = false;
+						} else if (prtn_PDG == 531 && (*prtn_pt)[i] > highest_pT) {
+							highest_pT = (*prtn_pt)[i];
+							found_B0s = true;  found_B0 = false;
+							found_Bp  = false; found_Bb = false; 
+						} else if ((prtn_PDG > 5100 && prtn_PDG < 5560) && (*prtn_pt)[i] > highest_pT) {
+							highest_pT = (*prtn_pt)[i];
+							found_Bb = true;   found_B0 = false;
+							found_Bp = false;  found_B0s = false; 
+						}
+				 	}
+				} else if (C_had_weighting == true) {
+					//Finds the highest pT C-hadron
+				  if (prtn_JI==i_probe) {
+						if (prtn_PDG == 411 && (*prtn_pt)[i] > highest_pT) {
+							highest_pT = (*prtn_pt)[i];
+							found_D0  = true;  found_Dp = false;
+							found_Dps = false; found_Cb = false;
+						} else if (prtn_PDG == 421 && (*prtn_pt)[i] > highest_pT) {
+							highest_pT = (*prtn_pt)[i];
+							found_Dp = true; 	 found_D0 = false;
+							found_Dps = false; found_Cb = false;
+						} else if (prtn_PDG == 431 && (*prtn_pt)[i] > highest_pT) {
+							highest_pT = (*prtn_pt)[i];
+							found_Dps = true;  found_D0 = false;
+							found_Dp  = false; found_Cb = false; 
+						} else if ((prtn_PDG > 4100 && prtn_PDG < 4450) && (*prtn_pt)[i] > highest_pT) {
+							highest_pT = (*prtn_pt)[i];
+							found_Cb = true;   found_D0 = false;
+							found_Dp = false;  found_Dps = false; 
+						}
+				 	}
 				}
-		 	}
-	  }
-	
-		if 			(found_B0 == true)  additional_weight *= wB0;
-		else if (found_Bp == true)  additional_weight *= wBp;
-		else if (found_B0s == true) additional_weight *= wB0s;
-		else if (found_Bb == true)  additional_weight *= wBb;
+			}
 
-	  //checks whether there's no B-hadrons
-	  if (found_B0 == false && found_Bp == false && found_B0s == false && found_Bb == false) {
-	    found_nonB = true;	
-	  }
+			if 			(found_B0 == true)  additional_weight *= wB0;
+			else if (found_Bp == true)  additional_weight *= wBp;
+			else if (found_B0s == true) additional_weight *= wB0s;
+			else if (found_Bb == true)  additional_weight *= wBb;
 
-	  //if B-hadron weighting is off, clear the additional weight
-	  if (B_had_weighting == false) {
-			additional_weight = 1.0;
-	  }
+			if 			(found_D0 == true)  additional_weight *= wD0;
+			else if (found_Dp == true)  additional_weight *= wDp;
+			else if (found_Dps == true) additional_weight *= wDps;
+			else if (found_Cb == true)  additional_weight *= wCb;
+
+			//checks whether there's no B-hadrons
+			if (found_B0 == false && found_Bp == false && found_B0s == false && found_Bb == false) {
+			  found_nonB = true;	
+			}
+
+			//checks whether there's no C-hadrons
+			if (found_D0 == false && found_Dp == false && found_Dps == false && found_Cb == false) {
+			  found_nonC = true;	
+			}
+		}
     
     /******************* RECONSTRUCT PARTICLES NOT IN JETS *******************/
     //Reset histograms
@@ -1223,8 +1474,14 @@ void CMSJES::Loop()
     if (found_B0 == true) prpTbal_B0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
     if (found_Bp == true) prpTbal_Bp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
     if (found_B0s == true) prpTbal_B0s->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
-    if (found_Bb== true) prpTbal_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+    if (found_Bb == true) prpTbal_Bb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
     if (found_nonB == true) prpTbal_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+
+    if (found_D0 == true) prpTbal_D0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+    if (found_Dp == true) prpTbal_Dp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+    if (found_Dps == true) prpTbal_Dps->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+    if (found_Cb == true) prpTbal_Cb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+    if (found_nonC == true) prpTbal_nonC->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 
     //MPF response
     R_MPF_r = 1.0 + (MET_r.Px()*tag_r.Px() + MET_r.Py()*tag_r.Py()) / pow((tag_r.Pt()),2);
@@ -1237,7 +1494,13 @@ void CMSJES::Loop()
 	  if (found_Bp == true) prMPF_Bp->Fill(tag_r.Pt(), R_MPF_r, new_weight);	  	  
 	  if (found_B0s == true) prMPF_B0s->Fill(tag_r.Pt(), R_MPF_r, new_weight);	    
 	  if (found_Bb  == true) prMPF_Bb->Fill(tag_r.Pt(), R_MPF_r, new_weight);	    
-	  if (found_nonB == true) prMPF_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);	  	  
+	  if (found_nonB == true) prMPF_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);	
+
+	  if (found_D0 == true) prMPF_D0->Fill(tag_r.Pt(), R_MPF_r, new_weight);	  
+	  if (found_Dp == true) prMPF_Dp->Fill(tag_r.Pt(), R_MPF_r, new_weight);	  	  
+	  if (found_Dps == true) prMPF_Dps->Fill(tag_r.Pt(), R_MPF_r, new_weight);	    
+	  if (found_Cb  == true) prMPF_Cb->Fill(tag_r.Pt(), R_MPF_r, new_weight);	    
+	  if (found_nonC == true) prMPF_nonC->Fill(tag_r.Pt(), R_MPF_r, new_weight);  	  
 
     Rjet      = probe_r.Pt()/probe_g.Pt();
     Rjet_calo = probe_calo.Pt()/probe_g.Pt(); 
@@ -1250,6 +1513,12 @@ void CMSJES::Loop()
     if (found_B0s == true) prRjet_B0s->Fill(probe_g.Pt(), Rjet, new_weight); 
     if (found_Bb == true) prRjet_Bb->Fill(probe_g.Pt(), Rjet, new_weight); 
     if (found_nonB == true) prRjet_nonB->Fill(probe_g.Pt(), Rjet, new_weight); 
+
+    if (found_D0 == true) prRjet_D0->Fill(probe_g.Pt(), Rjet, new_weight);
+    if (found_Dp == true) prRjet_Dp->Fill(probe_g.Pt(), Rjet, new_weight); 
+    if (found_Dps == true) prRjet_Dps->Fill(probe_g.Pt(), Rjet, new_weight); 
+    if (found_Cb == true) prRjet_Cb->Fill(probe_g.Pt(), Rjet, new_weight); 
+    if (found_nonC == true) prRjet_nonC->Fill(probe_g.Pt(), Rjet, new_weight); 
 
     prRjet_calo->Fill(probe_g.Pt(), Rjet_calo, new_weight);
 
@@ -1293,6 +1562,31 @@ void CMSJES::Loop()
 						prMPFb_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
 						prRjetb_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
 						prpTbalb_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_D0 == true) {
+						prMPFb_D0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetb_D0->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalb_D0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}				
+					if (found_Dp == true) {
+						prMPFb_Dp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetb_Dp->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalb_Dp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_Dps == true) {
+						prMPFb_Dps->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetb_Dps->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalb_Dps->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_Cb == true) {
+						prMPFb_Cb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetb_Cb->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalb_Cb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_nonC == true) {
+						prMPFb_nonC->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetb_nonC->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalb_nonC->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 					}
 
 					//fill the semileptonic related histograms	
@@ -1393,6 +1687,31 @@ void CMSJES::Loop()
 						prRjetlq_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
 						prpTballq_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 					}
+					if (found_D0 == true) {
+						prMPFlq_D0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetlq_D0->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTballq_D0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}				
+					if (found_Dp == true) {
+						prMPFlq_Dp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetlq_Dp->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTballq_Dp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_Dps == true) {
+						prMPFlq_Dps->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetlq_Dps->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTballq_Dps->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_Cb == true) {
+						prMPFlq_Cb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetlq_Cb->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTballq_Cb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_nonC == true) {
+						prMPFlq_nonC->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetlq_nonC->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTballq_nonC->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
 
 					if (probeFlav == 4) {                         //c-jets
 						FFc->Fill(tag_r.Pt(), new_weight);
@@ -1425,7 +1744,98 @@ void CMSJES::Loop()
 							prRjetc_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
 							prpTbalc_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 						}
+						if (found_D0 == true) {
+							prMPFc_D0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetc_D0->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalc_D0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}				
+						if (found_Dp == true) {
+							prMPFc_Dp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetc_Dp->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalc_Dp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_Dps == true) {
+							prMPFc_Dps->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetc_Dps->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalc_Dps->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_Cb == true) {
+							prMPFc_Cb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetc_Cb->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalc_Cb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_nonC == true) {
+							prMPFc_nonC->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetc_nonC->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalc_nonC->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
 
+						//fill the semileptonic related histograms	
+						if (semilep_decay) {
+							FFc_slep->Fill(tag_r.Pt(), new_weight);
+							prMPFc_slep->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetc_slep->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalc_slep->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+
+							if (found_D0 == true) {
+								prMPFc_slep_D0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+								prRjetc_slep_D0->Fill(probe_g.Pt(), Rjet, new_weight);
+								prpTbalc_slep_D0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+							}				
+							if (found_Dp == true) {
+								prMPFc_slep_Dp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+								prRjetc_slep_Dp->Fill(probe_g.Pt(), Rjet, new_weight);
+								prpTbalc_slep_Dp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+							}
+							if (found_Dps == true) {
+								prMPFc_slep_Dps->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+								prRjetc_slep_Dps->Fill(probe_g.Pt(), Rjet, new_weight);
+								prpTbalc_slep_Dps->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+							}
+							if (found_Cb == true) {
+								prMPFc_slep_Cb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+								prRjetc_slep_Cb->Fill(probe_g.Pt(), Rjet, new_weight);
+								prpTbalc_slep_Cb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+							}
+							if (found_nonC == true) {
+								prMPFc_slep_nonC->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+								prRjetc_slep_nonC->Fill(probe_g.Pt(), Rjet, new_weight);
+								prpTbalc_slep_nonC->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+							}
+
+						//fill the non-semileptonic related histograms	
+						} else {
+							FFc_non_slep->Fill(tag_r.Pt(), new_weight);
+							prMPFc_non_slep->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetc_non_slep->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalc_non_slep->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+
+							if (found_D0 == true) {
+								prMPFc_non_slep_D0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+								prRjetc_non_slep_D0->Fill(probe_g.Pt(), Rjet, new_weight);
+								prpTbalc_non_slep_D0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+							}				
+							if (found_Dp == true) {
+								prMPFc_non_slep_Dp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+								prRjetc_non_slep_Dp->Fill(probe_g.Pt(), Rjet, new_weight);
+								prpTbalc_non_slep_Dp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+							}
+							if (found_Dps == true) {
+								prMPFc_non_slep_Dps->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+								prRjetc_non_slep_Dps->Fill(probe_g.Pt(), Rjet, new_weight);
+								prpTbalc_non_slep_Dps->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+							}
+							if (found_Cb == true) {
+								prMPFc_non_slep_Cb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+								prRjetc_non_slep_Cb->Fill(probe_g.Pt(), Rjet, new_weight);
+								prpTbalc_non_slep_Cb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+							}
+							if (found_nonC == true) {
+								prMPFc_non_slep_nonC->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+								prRjetc_non_slep_nonC->Fill(probe_g.Pt(), Rjet, new_weight);
+								prpTbalc_non_slep_nonC->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+							}
+						}
 					} else if (probeFlav == 3) {                  //s-jets
 						FFs->Fill(tag_r.Pt(), new_weight);
 						prMPFs->Fill(tag_r.Pt(), R_MPF_r, new_weight);
@@ -1456,6 +1866,31 @@ void CMSJES::Loop()
 							prMPFs_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
 							prRjets_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
 							prpTbals_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_D0 == true) {
+							prMPFs_D0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjets_D0->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbals_D0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}				
+						if (found_Dp == true) {
+							prMPFs_Dp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjets_Dp->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbals_Dp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_Dps == true) {
+							prMPFs_Dps->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjets_Dps->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbals_Dps->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_Cb == true) {
+							prMPFs_Cb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjets_Cb->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbals_Cb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_nonC == true) {
+							prMPFs_nonC->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjets_nonC->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbals_nonC->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 						}
 
 					} else if (probeFlav < 3) {                   //(u,d)
@@ -1489,6 +1924,31 @@ void CMSJES::Loop()
 							prRjetud_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
 							prpTbalud_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 						}
+						if (found_D0 == true) {
+							prMPFud_D0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetud_D0->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalud_D0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}				
+						if (found_Dp == true) {
+							prMPFud_Dp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetud_Dp->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalud_Dp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_Dps == true) {
+							prMPFud_Dps->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetud_Dps->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalud_Dps->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_Cb == true) {
+							prMPFud_Cb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetud_Cb->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalud_Cb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
+						if (found_nonC == true) {
+							prMPFud_nonC->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+							prRjetud_nonC->Fill(probe_g.Pt(), Rjet, new_weight);
+							prpTbalud_nonC->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+						}
 					}
 
 				} else if (probeFlav == 21) {                   //Gluon jets
@@ -1521,6 +1981,31 @@ void CMSJES::Loop()
 						prMPFg_nonB->Fill(tag_r.Pt(), R_MPF_r, new_weight);
 						prRjetg_nonB->Fill(probe_g.Pt(), Rjet, new_weight);
 						prpTbalg_nonB->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_D0 == true) {
+						prMPFg_D0->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetg_D0->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalg_D0->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}				
+					if (found_Dp == true) {
+						prMPFg_Dp->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetg_Dp->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalg_Dp->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_Dps == true) {
+						prMPFg_Dps->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetg_Dps->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalg_Dps->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_Cb == true) {
+						prMPFg_Cb->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetg_Cb->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalg_Cb->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
+					}
+					if (found_nonC == true) {
+						prMPFg_nonC->Fill(tag_r.Pt(), R_MPF_r, new_weight);
+						prRjetg_nonC->Fill(probe_g.Pt(), Rjet, new_weight);
+						prpTbalg_nonC->Fill(tag_r.Pt(), probe_r.Pt()/tag_r.Pt(), new_weight);
 					}
 
 				} else continue; //Undetermined flavour
