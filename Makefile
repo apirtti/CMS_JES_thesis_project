@@ -141,7 +141,7 @@ pythia8: pythia8/main.cpp pythia8.o libPrtclEvent.so
 	cd pythia8 && $(CXX) main.cpp pythia8.o -w -L../lib -lPrtclEvent $(INCLUDE) \
 	$(CXXFLAGS) $(ROOT) $(PYTHIA8) -ldl -o pythia8.exe
 
-pythia8.o: Pythia8Tree.cpp libPrtclEvent.so
+pythia8.o: Pythia8Tree.cpp Pythia8Tree.h libPrtclEvent.so
 	cd pythia8 && $(CXX) -c Pythia8Tree.cpp -L../lib -lPrtclEvent \
 	$(INCLUDE) $(CXXFLAGS) -w $(ROOT) $(PYTHIA8) -ldl -o $@
 
@@ -154,7 +154,7 @@ gpythia8: greedy_pythia8/main.cpp gpythia8.o
 	cd greedy_pythia8 && $(CXX) main.cpp gpythia8.o -w -L../lib $(INCLUDE) \
 	$(CXXFLAGS) $(ROOT) $(PYTHIA8) $(FASTJET) -ldl -o gpythia8.exe
 
-gpythia8.o: Pythia8Jets.cpp greedy_settings.h
+gpythia8.o: Pythia8Jets.cpp Pythia8Jets.h greedy_settings.h
 	cd greedy_pythia8 && $(CXX) -c Pythia8Jets.cpp -L../lib \
 	$(INCLUDE) $(CXXFLAGS) -w $(ROOT) $(PYTHIA8) -ldl -o $@
 
@@ -178,7 +178,7 @@ pythia6: pythia6/main.cpp pythia6.o libPrtclEvent.so
 	cd pythia6 && $(CXX) main.cpp pythia6.o -w -L../lib -lPrtclEvent $(INCLUDE) \
 	$(CXXFLAGS) $(ROOT) $(LHAPDF) $(PYTHIA6) -ldl -o pythia6.exe
 
-pythia6.o: Pythia6Tree.cpp libPrtclEvent.so
+pythia6.o: Pythia6Tree.cpp Pythia6Tree.h libPrtclEvent.so
 	cd pythia6 && $(CXX) -c Pythia6Tree.cpp -L../lib -lPrtclEvent \
 	$(INCLUDE) $(CXXFLAGS) -w $(ROOT) $(PYTHIA6) -ldl -o $@
 
