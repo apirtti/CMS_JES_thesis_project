@@ -836,15 +836,19 @@ void CMSJES::Loop()
 			//Finds the highest pT B-hadron
       if (prtn_JI==i_probe) {
 				if (prtn_PDG == 511 && (*prtn_pt)[i] > highest_pT) {
+					highest_pT = (*prtn_pt)[i];
 					found_B0  = true;  found_Bp = false;
 					found_B0s = false; found_Bb = false;
 				} else if (prtn_PDG == 521 && (*prtn_pt)[i] > highest_pT) {
+					highest_pT = (*prtn_pt)[i];
 					found_Bp = true; 	 found_B0 = false;
 				  found_B0s = false; found_Bb = false;
 				} else if (prtn_PDG == 531 && (*prtn_pt)[i] > highest_pT) {
+					highest_pT = (*prtn_pt)[i];
 	  			found_B0s = true;  found_B0 = false;
 				  found_Bp  = false; found_Bb = false; 
 				} else if ((prtn_PDG > 5100 && prtn_PDG < 5560) && (*prtn_pt)[i] > highest_pT) {
+					highest_pT = (*prtn_pt)[i];
 			    found_Bb = true;  found_B0 = false;
 				  found_Bp = false; found_B0s = false; 
 				}
