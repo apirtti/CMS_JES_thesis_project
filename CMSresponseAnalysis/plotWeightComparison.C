@@ -8,7 +8,7 @@ void plotWeightComparison() {
 
   //flags for different plotting options
   bool plot_mpf = 1;
-  bool plot_pTbal = 1;
+  bool plot_pTbal = 0;
 
   bool zoom_y_axis = 1;
   bool smaller_markers = 1;
@@ -538,7 +538,7 @@ void plotWeightComparison() {
 	  
     string plotName;
 		
-	  if (zoom_y_axis) plotName = "plots/weightedPlots/zoom_" + amount; 
+	  if (zoom_y_axis) plotName = "plots/weightedPlots/diff_plots/zoom_" + amount; 
 		else plotName = "plots/weightedPlots/diff_plots/" + amount;
 
     plotName += "_diff_MPF.pdf";	//Filetype suffix
@@ -1058,7 +1058,7 @@ void plotWeightComparison() {
 	  if (n_events == "5000000") amount = "5M";
 
 	  string plotName;
-	  if (zoom_y_axis) plotName = "plots/weightedPlots/zoom_" + amount; 
+	  if (zoom_y_axis) plotName = "plots/weightedPlots/diff_plots/zoom_" + amount; 
 		else plotName = "plots/weightedPlots/diff_plots/" + amount;
 
     plotName += "_diff_pTbal.pdf";	//Filetype suffix
