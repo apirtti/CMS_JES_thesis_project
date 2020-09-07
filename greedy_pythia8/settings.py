@@ -19,7 +19,7 @@ tune = 3
 # PtHat min and max should be chosen by the user, unless it's a ttbar event
 # Tranche 1:  80 - 320
 # Tranche 2: 180 - 420
-minPth = 5.0 #Earlier 20.0
+minPth = 10.0 #Earlier 20.0
 maxPth = 10000.0
 # PtHat weighting (in non-ttbar events)
 weighted=True
