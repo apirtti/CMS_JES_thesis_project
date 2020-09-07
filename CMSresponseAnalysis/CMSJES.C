@@ -15,7 +15,11 @@ void CMSJES::Loop()
 
   //Flags for B- and C-hadron weighting
   bool B_had_weighting = 0;
-  bool C_had_weighting = 1;
+  bool C_had_weighting = 0;
+
+	//Flags for normal run
+  bool B_had_normal = 0;
+  bool C_had_normal = 1;
 
   if (varCp3 && varCm3) {cout << "Both C-variants enabled!" << endl; return;}
 
@@ -1048,78 +1052,82 @@ void CMSJES::Loop()
 	  
 		/********************** ADDITIONAL EVENT WEIGHTING  **********************/
 
-		if (B_had_weighting == true || C_had_weighting == true) {
+		//Loop through partons of the probe jet, as the hadrons are saved only in the parton level
+		for (unsigned int i=0; i!=prtn_pdgid->size(); ++i) {
+	  	prtn_JI  = (*prtn_jet)[i];
+	    prtn_PDG = abs((*prtn_pdgid)[i]);
 
-			//Loop through partons of the probe jet, as the hadrons are saved only in the parton level
-			for (unsigned int i=0; i!=prtn_pdgid->size(); ++i) {
-		  	prtn_JI  = (*prtn_jet)[i];
-		    prtn_PDG = abs((*prtn_pdgid)[i]);
-
-				if (B_had_weighting == true) {
-					//Finds the highest pT B-hadron
-				  if (prtn_JI==i_probe) {
-						if (prtn_PDG == 511 && (*prtn_pt)[i] > highest_pT) {
-							highest_pT = (*prtn_pt)[i];
-							found_B0  = true;  found_Bp = false;
-							found_B0s = false; found_Bb = false;
-						} else if (prtn_PDG == 521 && (*prtn_pt)[i] > highest_pT) {
-							highest_pT = (*prtn_pt)[i];
-							found_Bp = true; 	 found_B0 = false;
-							found_B0s = false; found_Bb = false;
-						} else if (prtn_PDG == 531 && (*prtn_pt)[i] > highest_pT) {
-							highest_pT = (*prtn_pt)[i];
-							found_B0s = true;  found_B0 = false;
-							found_Bp  = false; found_Bb = false; 
-						} else if ((prtn_PDG > 5100 && prtn_PDG < 5560) && (*prtn_pt)[i] > highest_pT) {
-							highest_pT = (*prtn_pt)[i];
-							found_Bb = true;   found_B0 = false;
-							found_Bp = false;  found_B0s = false; 
-						}
-				 	}
-				} else if (C_had_weighting == true) {
-					//Finds the highest pT C-hadron
-				  if (prtn_JI==i_probe) {
-						if (prtn_PDG == 411 && (*prtn_pt)[i] > highest_pT) {
-							highest_pT = (*prtn_pt)[i];
-							found_D0  = true;  found_Dp = false;
-							found_Dps = false; found_Cb = false;
-						} else if (prtn_PDG == 421 && (*prtn_pt)[i] > highest_pT) {
-							highest_pT = (*prtn_pt)[i];
-							found_Dp = true; 	 found_D0 = false;
-							found_Dps = false; found_Cb = false;
-						} else if (prtn_PDG == 431 && (*prtn_pt)[i] > highest_pT) {
-							highest_pT = (*prtn_pt)[i];
-							found_Dps = true;  found_D0 = false;
-							found_Dp  = false; found_Cb = false; 
-						} else if ((prtn_PDG > 4100 && prtn_PDG < 4450) && (*prtn_pt)[i] > highest_pT) {
-							highest_pT = (*prtn_pt)[i];
-							found_Cb = true;   found_D0 = false;
-							found_Dp = false;  found_Dps = false; 
-						}
-				 	}
+			if (B_had_weighting || B_had_normal) {
+				//Finds the highest pT B-hadron
+				if (prtn_JI==i_probe) {
+					if (prtn_PDG == 511 && (*prtn_pt)[i] > highest_pT) {
+						highest_pT = (*prtn_pt)[i];
+						found_B0  = true;  found_Bp = false;
+						found_B0s = false; found_Bb = false;
+					} else if (prtn_PDG == 521 && (*prtn_pt)[i] > highest_pT) {
+						highest_pT = (*prtn_pt)[i];
+						found_Bp = true; 	 found_B0 = false;
+						found_B0s = false; found_Bb = false;
+					} else if (prtn_PDG == 531 && (*prtn_pt)[i] > highest_pT) {
+						highest_pT = (*prtn_pt)[i];
+						found_B0s = true;  found_B0 = false;
+						found_Bp  = false; found_Bb = false; 
+					} else if ((prtn_PDG > 5100 && prtn_PDG < 5560) && (*prtn_pt)[i] > highest_pT) {
+						highest_pT = (*prtn_pt)[i];
+						found_Bb = true;   found_B0 = false;
+						found_Bp = false;  found_B0s = false; 
+					}
 				}
-			}
+		 	}
 
+			if (C_had_weighting || C_had_normal) {
+				//Finds the highest pT C-hadron
+				if (prtn_JI==i_probe) {
+					if (prtn_PDG == 411 && (*prtn_pt)[i] > highest_pT) {
+						highest_pT = (*prtn_pt)[i];
+						found_D0  = true;  found_Dp = false;
+						found_Dps = false; found_Cb = false;
+					} else if (prtn_PDG == 421 && (*prtn_pt)[i] > highest_pT) {
+						highest_pT = (*prtn_pt)[i];
+						found_Dp = true; 	 found_D0 = false;
+						found_Dps = false; found_Cb = false;
+					} else if (prtn_PDG == 431 && (*prtn_pt)[i] > highest_pT) {
+						highest_pT = (*prtn_pt)[i];
+						found_Dps = true;  found_D0 = false;
+						found_Dp  = false; found_Cb = false; 
+					} else if ((prtn_PDG > 4100 && prtn_PDG < 4450) && (*prtn_pt)[i] > highest_pT) {
+						highest_pT = (*prtn_pt)[i];
+						found_Cb = true;   found_D0 = false;
+						found_Dp = false;  found_Dps = false; 
+					}
+			 	}
+			}
+		}
+			
+		if (B_had_weighting == true) {
 			if 			(found_B0 == true)  additional_weight *= wB0;
 			else if (found_Bp == true)  additional_weight *= wBp;
 			else if (found_B0s == true) additional_weight *= wB0s;
 			else if (found_Bb == true)  additional_weight *= wBb;
+		}
 
+		if (C_had_weighting == true) {
 			if 			(found_D0 == true)  additional_weight *= wD0;
 			else if (found_Dp == true)  additional_weight *= wDp;
 			else if (found_Dps == true) additional_weight *= wDps;
 			else if (found_Cb == true)  additional_weight *= wCb;
-
-			//checks whether there's no B-hadrons
-			if (found_B0 == false && found_Bp == false && found_B0s == false && found_Bb == false) {
-			  found_nonB = true;	
-			}
-
-			//checks whether there's no C-hadrons
-			if (found_D0 == false && found_Dp == false && found_Dps == false && found_Cb == false) {
-			  found_nonC = true;	
-			}
 		}
+
+		//checks whether there's no B-hadrons
+		if (found_B0 == false && found_Bp == false && found_B0s == false && found_Bb == false) {
+		  found_nonB = true;	
+		}
+
+		//checks whether there's no C-hadrons
+		if (found_D0 == false && found_Dp == false && found_Dps == false && found_Cb == false) {
+		  found_nonC = true;	
+		}
+		
     
     /******************* RECONSTRUCT PARTICLES NOT IN JETS *******************/
     //Reset histograms
